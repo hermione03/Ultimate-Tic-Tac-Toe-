@@ -21,7 +21,7 @@ typedef struct
 {
     LocalGrid localboard[3][3];
     char current_player;
-    char free_choice;
+    char relative_grid;
     char winner;
 } GlobaleGrid;
 
@@ -51,7 +51,7 @@ GlobaleGrid initialize_global_grid()
     game.localboard[2][0].board[0][1] = 'O';
     game.localboard[2][0].board[0][2] = 'O';
     game.winner = ' ';
-
+    game.relative_grid = -1;
     // memset(game.localboard, '-', sizeof(game.localboard));
     return game;
 }
@@ -61,9 +61,7 @@ typedef struct
 {
     int row;
     int col;
-} move;
-
-
+} last_move;
 
 void display_local_grid(LocalGrid *grid)
 {
@@ -81,59 +79,62 @@ void display_local_grid(LocalGrid *grid)
 
 void debug_display_game(GlobaleGrid *game)
 {
-    int global,acc = 0;
+    int global, acc = 0;
+    char str[256];
     for (int i = 0; i < 3; i++)
     {
         if (i > 0) // Pour afficher une ligne de séparation entre les lignes de grilles
         {
-            //printf("_________________________________| |________________________________| |________________________________| |\n");
-            printf("________________________| |_______________________| |_______________________| |\n");
+            // printf("_________________________________| |________________________________| |________________________________| |\n");
+            printf("___________________________| |__________________________| |__________________________| |\n");
         }
 
         for (int row = 0; row < 3; row++)
-        {   
+        {
             printf("| ");
             for (int j = 0; j < 3; j++)
             {
 
                 global = i + j + acc;
-                
+
                 for (int col = 0; col < 3; col++)
                 {
-                    //printf("%c ", game->localboard[i][row].board[col][col]);
+                    // printf("%c ", game->localboard[i][row].board[col][col]);
                     if (game->localboard[i][j].winner == ' ')
                     {
-                        if(game->localboard[i][j].board[row][col] == '-'){
-                            printf("(%d,%d) | ",row,col+(global*3));
-                        //printf("(%d)(%d,%d) | ",global,row,col+(global*3));
+                        if (game->localboard[i][j].board[row][col] == '-')
+                        {
+                            sprintf(str, "(%d,%d)", row, col + (global * 3));
+                            printf("%-6s | ", str);
+                            // printf("(%d,%d) | ", row, col + (global * 3));
+                            // printf("(%d)(%d,%d) | ",global,row,col+(global*3));
                         }
-                        else{
-                            
-                            printf(game->localboard[i][j].board[row][col] == 'O'?"  \033[34m%c\033[0m   |":"   \033[35m%c\033[0m   |" , game->localboard[i][j].board[row][col]);
+                        else
+                        {
+                            printf(game->localboard[i][j].board[row][col] == 'O' ? "  \033[34m%c\033[0m    | " : "  \033[35m%c\033[0m    | ", game->localboard[i][j].board[row][col]);
                         }
                     }
-                    else{
-                        printf(game->localboard[i][j].winner== 'O'?"  \033[34m%c\033[0m   |":"   \033[35m%c\033[0m   |" , game->localboard[i][j].board[row][col]);
-                        //printf("%c ", game->localboard[i][j].board[row][col]);
+                    else
+                    {
+                        printf(game->localboard[i][j].winner == 'O' ? "  \033[34m%c\033[0m    | " : "  \033[35m%c\033[0m    | ", game->localboard[i][j].board[row][col]);
+                        // printf("%c ", game->localboard[i][j].board[row][col]);
                     }
-                    //printf("(%d,%d) | ",row,col+(global*3));
+                    // printf("(%d,%d) | ",row,col+(global*3));
                 }
                 printf("| ");
             }
-            
+
             printf("\n");
         }
-    acc+=2;
+        acc += 2;
     }
-    //printf("_________________________________| |________________________________| |________________________________| |\n");
+    // printf("_________________________________| |________________________________| |________________________________| |\n");
     printf("\n");
 }
-            
 
 int LG_CheckIfWon(LocalGrid *grid)
 {
     int i, j;
-    char winner = ' ';
 
     // Vérification des lignes
     for (i = 0; i < 3; i++)
@@ -142,11 +143,9 @@ int LG_CheckIfWon(LocalGrid *grid)
             grid->board[i][1] == grid->board[i][2] &&
             grid->board[i][0] != '-')
         {
-            winner = grid->board[i][0];
-            printf("Lignes %d gagnant %s\n" ,i,winner);
+            grid->winner = grid->board[i][0];
             memset(grid->board, '-', sizeof(grid->board)); // Vider la grille locale
-            grid->board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la ligne gagnante
-            grid->winner = winner;
+            grid->board[1][1] = grid->winner;              // Placer le symbole du gagnant au milieu
             return 1;
         }
     }
@@ -158,11 +157,9 @@ int LG_CheckIfWon(LocalGrid *grid)
             grid->board[1][i] == grid->board[2][i] &&
             grid->board[0][i] != '-')
         {
-            winner = grid->board[0][i];
-            printf("Colonnes %d gagnant %s\n" ,i,winner);
+            grid->winner = grid->board[0][i];
             memset(grid->board, '-', sizeof(grid->board)); // Vider la grille locale
-            grid->board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la colonne gagnante
-            grid->winner = winner;
+            grid->board[1][1] = grid->winner;              // Placer le symbole du gagnant au milieu
             return 1;
         }
     }
@@ -171,22 +168,18 @@ int LG_CheckIfWon(LocalGrid *grid)
     if (grid->board[0][0] == grid->board[1][1] && grid->board[1][1] == grid->board[2][2] &&
         grid->board[0][0] != '-')
     {
-        winner = grid->board[0][0];
-        printf("Diag %d gagnant %s\n" ,i,winner);
+        grid->winner = grid->board[0][0];
         memset(grid->board, '-', sizeof(grid->board)); // Vider la grille locale
-        grid->board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la diagonale gagnante
-        grid->winner = winner;
+        grid->board[1][1] = grid->winner;              // Placer le symbole du gagnant au milieu
         return 1;
     }
 
     if (grid->board[0][2] == grid->board[1][1] && grid->board[1][1] == grid->board[2][0] &&
         grid->board[0][2] != '-')
     {
-        winner = grid->board[0][2];
-        printf("Diag2 %d gagnant %s\n" ,i,winner);
+        grid->winner = grid->board[0][2];
         memset(grid->board, '-', sizeof(grid->board)); // Vider la grille locale
-        grid->board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la diagonale gagnante
-        grid->winner = winner;
+        grid->board[1][1] = grid->winner;              // Placer le symbole du gagnant au milieu
         return 1;
     }
 
@@ -222,87 +215,154 @@ int isGlobalGridFull(GlobaleGrid game)
     }
     return 1; // Toutes les grilles locales sont pleines, la grille globale est pleine
 }
-
-
-
 int game_CheckIfWon(GlobaleGrid *game)
 {
-    int i, j;
-    //char winner = ' ';
+    int i;
 
-    // Vérification des lignes
+    // Vérification des lignes de grilles globales
     for (i = 0; i < 3; i++)
     {
-        if (game->localboard[i][0].board[1][1] == game->localboard[i][1].board[1][1] &&
-            game->localboard[i][1].board[1][1] == game->localboard[i][2].board[1][1] &&
-            game->localboard[i][0].board[1][1] != '-')
+        if (game->localboard[i][0].winner == game->localboard[i][1].winner &&
+            game->localboard[i][1].winner == game->localboard[i][2].winner &&
+            game->localboard[i][0].winner != ' ')
         {
-            
-            // game->localboard[1][1].board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la ligne gagnante
-            game->winner = game->localboard[0][i].board[1][1];
+            game->winner = game->localboard[i][0].winner;
+            printf(" %c a gagné(e) !", game->winner);
             return 1;
         }
     }
 
-    // Vérification des colonnes
+    // Vérification des colonnes de grilles globales
     for (i = 0; i < 3; i++)
     {
-        if (game->localboard[0][i].board[1][1] == game->localboard[1][i].board[1][1] &&
-            game->localboard[1][i].board[1][1] == game->localboard[2][i].board[1][1] &&
-            game->localboard[0][i].board[1][1] != '-')
+        if (game->localboard[0][i].winner == game->localboard[1][i].winner &&
+            game->localboard[1][i].winner == game->localboard[2][i].winner &&
+            game->localboard[0][i].winner != ' ')
         {
-            
-            // game->localboard[1][1].board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la colonne gagnante
-            game->winner = game->localboard[0][i].board[1][1];
+            game->winner = game->localboard[0][i].winner;
+            printf(" %c a gagné(e) !", game->winner);
             return 1;
         }
     }
 
-    // Vérification des diagonales
-    if (game->localboard[0][0].board[1][1] == game->localboard[1][1].board[1][1] && game->localboard[1][1].board[1][1] == game->localboard[2][2].board[1][1] &&
-        game->localboard[0][0].board[1][1] != '-')
+    // Vérification des diagonales de grilles globales
+    if (game->localboard[0][0].winner == game->localboard[1][1].winner &&
+        game->localboard[1][1].winner == game->localboard[2][2].winner &&
+        game->localboard[0][0].winner != ' ')
     {
-        
-        // game->localboard[1][1].board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la diagonale gagnante
-            game->winner = game->localboard[0][i].board[1][1];
+        game->winner = game->localboard[0][0].winner;
         return 1;
     }
 
-    if (game->localboard[0][2].board[1][1] == game->localboard[1][1].board[1][1] && game->localboard[1][1].board[1][1] == game->localboard[2][0].board[1][1] &&
-        game->localboard[0][2].board[1][1] != '-')
+    if (game->localboard[0][2].winner == game->localboard[1][1].winner &&
+        game->localboard[1][1].winner == game->localboard[2][0].winner &&
+        game->localboard[0][2].winner != ' ')
     {
-        
-        // game->localboard[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la diagonale gagnante
-        game->winner = game->localboard[0][i].board[1][1];
+        game->winner = game->localboard[0][2].winner;
+        printf(" %c a gagné(e) !", game->winner);
         return 1;
     }
 
     return 0;
 }
 
+// int game_CheckIfWon(GlobaleGrid *game)
+// {
+//     int i, j;
+//     // char winner = ' ';
+
+//     // Vérification des lignes
+//     for (i = 0; i < 3; i++)
+//     {
+//         if (game->localboard[i][0].board[1][1] == game->localboard[i][1].board[1][1] &&
+//             game->localboard[i][1].board[1][1] == game->localboard[i][2].board[1][1] &&
+//             game->localboard[i][0].board[1][1] != '-')
+//         {
+
+//             // game->localboard[1][1].board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la ligne gagnante
+//             game->winner = game->localboard[0][i].board[1][1];
+//             printf(" %c a gagné(e) !", game->winner);
+//             return 1;
+//         }
+//     }
+
+//     // Vérification des colonnes
+//     for (i = 0; i < 3; i++)
+//     {
+//         if (game->localboard[0][i].board[1][1] == game->localboard[1][i].board[1][1] &&
+//             game->localboard[1][i].board[1][1] == game->localboard[2][i].board[1][1] &&
+//             game->localboard[0][i].board[1][1] != '-')
+//         {
+
+//             // game->localboard[1][1].board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la colonne gagnante
+//             game->winner = game->localboard[0][i].board[1][1];
+//             printf(" %c a gagné(e) !", game->winner);
+//             return 1;
+//         }
+//     }
+
+//     // Vérification des diagonales
+//     if (game->localboard[0][0].board[1][1] == game->localboard[1][1].board[1][1] && game->localboard[1][1].board[1][1] == game->localboard[2][2].board[1][1] &&
+//         game->localboard[0][0].board[1][1] != '-')
+//     {
+
+//         // game->localboard[1][1].board[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la diagonale gagnante
+//         game->winner = game->localboard[0][i].board[1][1];
+//         printf(" %c a gagné(e) !", game->winner);
+//         return 1;
+//     }
+
+//     if (game->localboard[0][2].board[1][1] == game->localboard[1][1].board[1][1] && game->localboard[1][1].board[1][1] == game->localboard[2][0].board[1][1] &&
+//         game->localboard[0][2].board[1][1] != '-')
+//     {
+
+//         // game->localboard[1][1] = winner;                    // Placer le symbole du gagnant au milieu de la diagonale gagnante
+//         game->winner = game->localboard[0][i].board[1][1];
+//         printf(" %c a gagné(e) !", game->winner);
+//         return 1;
+//     }
+
+//     return 0;
+// }
+
 void updatePlayer(GlobaleGrid *game)
 {
     game->current_player ^= COMPUTER ^ HUMAN;
 }
 
-int possibleMove(GlobaleGrid *game, int prev, int x, int y)
+int possibleMove(GlobaleGrid *game, int x, int y)
 {
-    // prev doit etre calculée --> c'est le g 
-    int xg,yg,g;
-    //verifier si c dans la grille globale d'abord 
-    if (x > 2 || y > 26){
+    // prev doit etre calculée --> c'est le g
+    int xg, yg, g;
+    xg = (y / 3) / 3;
+    yg = (y / 3) % 3;
+    g = yg + (3 * xg);
+    // verifier si c dans la grille globale d'abord
+    if (x > 2 || y > 26)
+    {
         printf("Position invalide : en dehors de la grille globale !\n");
         return 0;
     }
-    // else{
-    //     xg = (y/3) / 3;
-    //     yg = (y/3) % 3;
-    //     g = yg +(3*xg);
-    //     if(prev!= g){
-    //         printf("Vous n'avez pas le droit de jouer dans cette grille Locale !\n");
-    //         return 0;
-    //     }
-    // }
+    else
+    {
+        if (game->relative_grid > -1 || isLocalGridFull(&game->localboard[xg][yg]) || game->localboard[xg][yg].winner != ' ')
+        {
+
+            if (game->relative_grid != g)
+            {
+                printf("Vous n'avez pas le droit de jouer dans cette grille Locale !\n");
+                return 0;
+            }
+        }
+        // else
+        // {
+        //     if (game->localboard[xg][yg].board[x][y] != '-')
+        //     {
+        //         printf("Cette case est deja prise !\n");
+        //         return 0;
+        //     }
+        // }
+    }
     return 1;
 }
 
@@ -326,7 +386,7 @@ char *playerToString(enum player p)
 
 int UTTT_GAME(GlobaleGrid *game)
 {
-    int x,y,xg,yg,g;
+    int x, y, xg, yg;
     // printf("Tour de %s de placer un %c \n", playerToString(game->current_player), game->current_player);
     // printf("Choisisser une case à jouer :\n");
     // display_game(game);
@@ -338,51 +398,52 @@ int UTTT_GAME(GlobaleGrid *game)
 
     //     Tant que le joueur n'a pas sélectionné une case valide:
 
-
     //         Si la grille globale est pleine ou qu'il y a un gagnant:
     //             Terminer la partie --> return 0;
 
     //         Lire l'entrée du joueur pour la case à jouer
     // avec un scanf
-    
-    do {
+
+    do
+    {
 
         printf("Choisissez une case à jouer (x, y) : ");
-            if (scanf("%d,%d", &x, &y) != 2) {
-    //         Si la case sélectionnée n'est pas valide:
-    //             Afficher un message d'erreur
-                printf("Entrée invalide. Veuillez entrer les coordonnées x et y séparées par une virgule (par exemple : 1,2).\n");
-                while (getchar() != '\n'); // Vider le tampon d'entrée
-            }
-    } while (!possibleMove(game,0,x,y));
+        // Si la case sélectionnée n'est pas valide:
+        if (scanf("%d,%d", &x, &y) != 2)
+        {
 
-    
-    printf("x = %d,y = %d\n",x,y);
-    xg = (y/3) / 3;
-    yg = (y/3) % 3;
-    g = yg +(3*xg);
-    printf("Grille globale numero %d --> x = %d, y = %d\n", g, xg, yg);
-    printf("Grille Locale : x = %d,y = %d\n",x,y%3);
-    y = y%3;
-    
-    //debug_display_game(game);
+            // Afficher un message d'erreur
+            printf("Entrée invalide. Veuillez entrer les coordonnées x et y séparées par une virgule (par exemple : 1,2).\n");
+            // Vider le tampon d'entrée
+            while (getchar() != '\n')
+                ;
+        }
+    } while (!possibleMove(game, x, y));
+
+    printf("x = %d,y = %d\n", x, y);
+    xg = (y / 3) / 3;
+    yg = (y / 3) % 3;
+    game->relative_grid = yg + (3 * xg);
+
+    printf("grille relative =  %d\n", game->relative_grid);
+    printf("Grille globale numero %d --> x = %d, y = %d\n", game->relative_grid, xg, yg);
+    printf("Grille Locale : x = %d,y = %d\n", x, y % 3);
+    y = y % 3;
+
+    // debug_display_game(game);
 
     //         Sinon:
     //             Si la case sélectionnée est valide dans la grille globale:
     //                 Mettre à jour la grille globale avec le coup du joueur
-    //     Mettre à jour la grille locale correspondante avec le coup du joueur
+    // Mettre à jour la grille locale correspondante avec le coup du joueur
     game->localboard[xg][yg].board[x][y] = game->current_player;
-    //     Vérifier si la grille locale est gagnée
-    // LG_CheckIfWon(game->localboard[xg][yg].board[x][y]);
-    if (LG_CheckIfWon(&game->localboard[xg][yg])){
-        printf("Grille locale gagnée par : %s\n", &game->localboard[xg][yg].winner);
+    // Vérifier si la grille locale est gagnée
+    if (LG_CheckIfWon(&game->localboard[xg][yg]))
+    {
+        printf("Grille locale gagnée par : %s\n", playerToString(game->current_player));
     }
-
-
-    //     Si la grille locale est gagnée:
-    //         Placer le symbole du gagnant au milieu de la grille globale
-
     //     Vérifier si la grille globale est gagnée
+
     //     Si la grille globale est gagnée ou si elle est pleine:
     //         Terminer la partie
 
@@ -397,7 +458,7 @@ int main()
     GlobaleGrid game = initialize_global_grid(); // Initialisation de la grille globale avec des tirets
     // display_local_grid(&grid); // Affichage de la grille locale
     game.current_player = HUMAN;
-    game.free_choice = 1;
+    // game.relative_grid = 1;
     int count = 0;
     while (1)
     {
@@ -411,7 +472,14 @@ int main()
         {
             break;
         }
+        if (game_CheckIfWon(&game) || isGlobalGridFull(game))
+        {
+            debug_display_game(&game);
+            break;
+        }
     }
 
     return 0;
 }
+
+// Position relatives à corriger --> pour l'instant elle affiche la grille locale ou on vient de jouer et non celle relative
