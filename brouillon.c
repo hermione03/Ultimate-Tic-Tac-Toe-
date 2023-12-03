@@ -3,6 +3,7 @@
 #include <time.h>
 #include <string.h>
 
+
 enum player
 {
     COMPUTER = 'O',
@@ -139,6 +140,7 @@ int LG_CheckIfWon(LocalGrid *grid)
             grid->winner = grid->board[i][0];
             memset(grid->board, '-', sizeof(grid->board)); // Vider la grille locale
             grid->board[1][1] = grid->winner;              // Placer le symbole du gagnant au milieu
+            printf("\nelle est gagnééééé\n\n ! ");
             return 1;
         }
     }
@@ -153,6 +155,7 @@ int LG_CheckIfWon(LocalGrid *grid)
             grid->winner = grid->board[0][i];
             memset(grid->board, '-', sizeof(grid->board)); // Vider la grille locale
             grid->board[1][1] = grid->winner;              // Placer le symbole du gagnant au milieu
+            printf("\nelle est gagnééééé\n\n ! ");
             return 1;
         }
     }
@@ -164,6 +167,7 @@ int LG_CheckIfWon(LocalGrid *grid)
         grid->winner = grid->board[0][0];
         memset(grid->board, '-', sizeof(grid->board)); // Vider la grille locale
         grid->board[1][1] = grid->winner;              // Placer le symbole du gagnant au milieu
+        printf("\nelle est gagnééééé\n\n ! ");
         return 1;
     }
 
@@ -173,6 +177,7 @@ int LG_CheckIfWon(LocalGrid *grid)
         grid->winner = grid->board[0][2];
         memset(grid->board, '-', sizeof(grid->board)); // Vider la grille locale
         grid->board[1][1] = grid->winner;              // Placer le symbole du gagnant au milieu
+        printf("\nelle est gagnééééé\n\n ! ");
         return 1;
     }
 
@@ -187,11 +192,12 @@ int isLocalGridFull(LocalGrid *grid)
         {
             if (grid->board[i][j] == '-')
             {
+                printf("elle n'est pas plaine !\n ");
                 return 0; // Il y a une case vide, donc la grille n'est pas pleine
             }
         }
     }
-
+    
     return 1; // Aucune case vide, la grille est pleine
 }
 
@@ -221,7 +227,7 @@ int game_CheckIfWon(GlobaleGrid *game)
             game->localboard[i][0].winner != ' ')
         {
             game->winner = game->localboard[i][0].winner;
-            printf(" %c a gagné(e) !", game->winner);
+            printf(" %s a gagné(e) !\n", playerToString(game->winner));
             return 1;
         }
     }
@@ -234,7 +240,7 @@ int game_CheckIfWon(GlobaleGrid *game)
             game->localboard[0][i].winner != ' ')
         {
             game->winner = game->localboard[0][i].winner;
-            printf(" %c a gagné(e) !", game->winner);
+            printf(" %s a gagné(e) !\n", playerToString(game->winner));
             return 1;
         }
     }
@@ -245,6 +251,7 @@ int game_CheckIfWon(GlobaleGrid *game)
         game->localboard[0][0].winner != ' ')
     {
         game->winner = game->localboard[0][0].winner;
+        printf(" %s a gagné(e) !\n", playerToString(game->winner));
         return 1;
     }
 
@@ -253,7 +260,7 @@ int game_CheckIfWon(GlobaleGrid *game)
         game->localboard[0][2].winner != ' ')
     {
         game->winner = game->localboard[0][2].winner;
-        printf(" %c a gagné(e) !", game->winner);
+        printf(" %s a gagné(e) !\n", playerToString(game->winner));
         return 1;
     }
 
@@ -347,14 +354,17 @@ int UTTT_GAME(GlobaleGrid *game)
     printf("x = %d,y = %d\n", x, y);
     xg = (y / 3) / 3;
     yg = (y / 3) % 3;
-    // game->relative_grid = yg + (3 * xg);
-    if (isLocalGridFull(&game->localboard[x % 3][y / 3]) || LG_CheckIfWon(&game->localboard[x % 3][y / 3]))
+    printf("REGAAAAARDE : %d, %d", x, y%3);
+    //game->relative_grid = yg + (3 * xg);
+    if (isLocalGridFull(&game->localboard[x][y % 3]) || game->localboard[x][y % 3].winner != ' ')
     {
+
         printf("grille locale plaine ! \n");
         game->relative_grid = -1;
     }
     else
     {
+        printf("tu m'ememrde ! \n");
 
         game->relative_grid = y % 3 + x * 3;
     }
@@ -399,11 +409,11 @@ int main()
         // {
         //     break;
         // }
-        count++;
-        if (count > 8)
-        {
-            break;
-        }
+        // count++;
+        // if (count > 8)
+        // {
+        //     break;
+        // }
         if (game_CheckIfWon(&game) || isGlobalGridFull(game))
         {
             debug_display_game(&game);
