@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "Local_grid.h"
-#include "Global_grid.h"
+#include "LocalGrid.h"
+#include "GlobalGrid.h"
 #include "GAME.h"
 #include "AI.h"
 

@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include "Local_grid.h"
-#include "Global_grid.h"
+#include "LocalGrid.h"
+#include "GlobalGrid.h"
 #include "GAME.h"
 
 #define min(a, b) ((a) < (b) ? (a) : (b))

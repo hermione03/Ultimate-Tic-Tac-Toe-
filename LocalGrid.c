@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "Local_grid.h"
+#include "LocalGrid.h"
 
 void initialize_local_grid(LocalGrid *grid)
 {

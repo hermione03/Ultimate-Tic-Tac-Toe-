@@ -3,9 +3,9 @@ CFLAGS = -Wall -Wextra -Wfatal-errors
 NAME = Ultimate_TicTacToe
 DISTDIR = dist
 
-SRCS = Local_grid.c Global_grid.c GAME.c AI.c main.c
+SRCS = LocalGrid.c GlobalGrid.c GAME.c AI.c main.c
 OBJS = $(SRCS:.c=.o)
-HEADERS =  Local_grid.h Global_grid.h GAME.h AI.h
+HEADERS =  LocalGrid.h GlobalGrid.h GAME.h AI.h
 DISTFILES = $(SRCS) $(HEADERS) Makefile 
 
 .PHONY: all clean dist
