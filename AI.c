@@ -263,7 +263,7 @@ void displayNode(Node* node) {
     printf("Value : %d\n", node->value);
     printf("Nombre de successeurs : %d\n", node->num_successors);
 
-    debug_display_game(&node->state);
+    Display_game(&node->state);
 
     printf("Successeurs: ");
     for (int i = 0; i < node->num_successors; i++) {

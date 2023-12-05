@@ -39,7 +39,7 @@ typedef struct {
 
 // Prototypes de fonctions
 GlobalGrid initialize_global_grid();
-void debug_display_game(GlobalGrid *game);
+void Display_game(GlobalGrid *game);
 int isGlobalGridFull(GlobalGrid game);
 int game_CheckIfWon(GlobalGrid *game);
 

@@ -144,7 +144,7 @@ void display_local_grid(LocalGrid *grid)
     printf("******************************");
 }
 
-void debug_display_game(GlobalGrid *game)
+void Display_game(GlobalGrid *game)
 {
     int global, acc = 0;
     char str[256];
@@ -436,7 +436,7 @@ int UTTT_GAME(GlobalGrid *game)
     //  Afficher le joueur courant (humain ou ordinateur)
     printf("Tour de %s de placer un %c \n", playerToString(game->current_player), game->current_player);
     //     Afficher la grille globale
-    debug_display_game(game);
+    Display_game(game);
 
     //     Tant que le joueur n'a pas sélectionné une case valide:
 
@@ -602,7 +602,7 @@ void displayNode(Node* node) {
     printf("Value : %d\n", node->value);
     printf("Nombre de successeurs : %d\n", node->num_successors);
 
-    debug_display_game(&node->state);
+    Display_game(&node->state);
 
     printf("Successeurs: ");
     for (int i = 0; i < node->num_successors; i++) {
@@ -682,7 +682,7 @@ int main() {
         UTTT_GAME(&game); // Votre logique de jeu en boucle
 
         if (game_CheckIfWon(&game) || isGlobalGridFull(game)) {
-            debug_display_game(&game);
+            Display_game(&game);
             break;
         }
 

@@ -205,7 +205,7 @@ int UTTT_GAME(GlobalGrid *game)
     //  Afficher le joueur courant (humain ou ordinateur)
     printf("Tour de %s de placer un %c \n", playerToString(game->current_player), game->current_player);
     //     Afficher la grille globale
-    debug_display_game(game);
+    Display_game(game);
 
     //     Tant que le joueur n'a pas sélectionné une case valide:
 

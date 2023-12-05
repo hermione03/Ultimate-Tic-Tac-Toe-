@@ -216,20 +216,20 @@ GlobalGrid initialize_global_grid()
     return game;
 }
 
-void debug_display_game(GlobalGrid *game)
+void Display_game(GlobalGrid *game)
 {
-    printf("Display Game\n");
     int global, acc = 0;
     char str[256];
+    printf("╔══════════════════════╦══════════════════════╦══════════════════════╗\n");
     for (int i = 0; i < 3; i++)
     {
         if (i > 0)
         {
-            printf("___________________________| |__________________________| |__________________________| |\n");
+            printf("╠══════════════════════╬══════════════════════╬══════════════════════╣\n");
         }
         for (int row = 0; row < 3; row++)
         {
-            printf("| ");
+            printf("║ ");
             for (int j = 0; j < 3; j++)
             {
 
@@ -238,30 +238,28 @@ void debug_display_game(GlobalGrid *game)
                 for (int col = 0; col < 3; col++)
                 {
 
-                    if (game->localboard[i][j].winner == ' ')
+                    if (game->localboard[i][j].winner != ' ')
                     {
-                        if (game->localboard[i][j].board[row][col] == '-')
-                        {
-                            sprintf(str, "(%d,%d)", row, col + (global * 3));
-                            printf("%-6s | ", str);
-                        }
-                        else
-                        {
-                            printf(game->localboard[i][j].board[row][col] == 'O' ? "  \033[34m%c\033[0m    | " : "  \033[35m%c\033[0m    | ", game->localboard[i][j].board[row][col]);
-                        }
+                        printf(game->localboard[i][j].winner == 'O' ? "  \033[34m%c\033[0m    " : "  \033[35m%c\033[0m    ", game->localboard[i][j].board[row][col]);
+                    }
+                    else if (game->localboard[i][j].board[row][col] == '-')
+                    {
+                        sprintf(str, "(%d,%d)", row, col + (global * 3));
+                        printf("%-6s ", str);
                     }
                     else
                     {
-                        printf(game->localboard[i][j].winner == 'O' ? "  \033[34m%c\033[0m    | " : "  \033[35m%c\033[0m    | ", game->localboard[i][j].board[row][col]);
+                        printf(game->localboard[i][j].board[row][col] == 'O' ? "  \033[34m%c\033[0m    " : "  \033[35m%c\033[0m    ", game->localboard[i][j].board[row][col]);
                     }
                 }
-                printf("| ");
+                printf("║ ");
             }
 
             printf("\n");
         }
         acc += 2;
     }
+    printf("╚══════════════════════╩══════════════════════╩══════════════════════╝\n");
     printf("\n");
 }
 

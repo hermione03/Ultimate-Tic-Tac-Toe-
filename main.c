@@ -59,7 +59,7 @@ int main() {
         UTTT_GAME(&game); // Votre logique de jeu en boucle
 
         if (game_CheckIfWon(&game) || isGlobalGridFull(game)) {
-            debug_display_game(&game);
+            Display_game(&game);
             break;
         }
 
