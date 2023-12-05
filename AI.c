@@ -163,10 +163,8 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
             Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
             addSuccessor(node, child);
             Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
-            node->value = bestValue;
-            if (result->value > bestValue && result != NULL)
+            if (bestNode == NULL || result->value > bestNode->value)
             {
-                bestValue = result->value;
                 bestNode = result;
             }
         }
@@ -181,10 +179,8 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
             Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
             addSuccessor(node, child);
             Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
-            node->value = bestValue;
-            if (result->value < bestValue && result != NULL)
+            if (bestNode == NULL || result->value < bestNode->value)
             {
-                bestValue = result->value;
                 bestNode = result;
             }
         }

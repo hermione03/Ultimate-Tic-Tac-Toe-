@@ -122,7 +122,7 @@ int isGlobalGridFull(GlobalGrid game)
     {
         for (int j = 0; j < 3; j++)
         {
-            if (isLocalGridFull(&game.localboard[i][j]) == 0)
+            if (game.localboard[i][j].winner == ' ' && !isLocalGridFull(&game.localboard[i][j]))
             {
                 return 0; // Il y a une grille locale non pleine, donc la grille globale n'est pas pleine
             }
