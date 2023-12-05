@@ -20,12 +20,13 @@ void EvaluateMove(Node *state){
     state->value = 0;
 }
 
-Move **NextMoves(GlobalGrid game) {
+Move* NextMoves(GlobalGrid game) {
     int x, y, i = 0;
     int capacity = 1; 
-    Move **moves = (Move **)malloc(capacity * sizeof(Move *));
+    Move* moves = (Move*)malloc(sizeof(Move));
+    moves->lst_moves = (Pos**)malloc(capacity * sizeof(Pos*));
 
-    if (moves == NULL) {
+    if (moves == NULL || moves->lst_moves == NULL) {
         printf("Memory allocation failed for moves.\n");
         return NULL;
     }
@@ -33,30 +34,30 @@ Move **NextMoves(GlobalGrid game) {
     for (x = 0; x < 3; x++) {
         for (y = 0; y < 27; y++) {
             if (possibleMove(&game, x, y)) {
-                if (i >= capacity -1 ) {
+                if (i >= capacity - 1) {
                     capacity += 1;
-                    moves = (Move **)realloc(moves, capacity * sizeof(Move *));
-                    if (moves == NULL) {
-                        printf("Memory reallocation failed for moves.\n");
+                    moves->lst_moves = (Pos**)realloc(moves->lst_moves, capacity * sizeof(Pos*));
+                    if (moves->lst_moves == NULL) {
+                        printf("Memory reallocation failed for moves->lst_moves.\n");
                         return NULL;
                     }
                 }
 
-                moves[i] = (Move *)malloc(sizeof(Move));
-                if (moves[i] == NULL) {
-                    printf("Memory allocation failed for moves[%d].\n", i);
+                moves->lst_moves[i] = (Pos*)malloc(sizeof(Pos));
+                if (moves->lst_moves[i] == NULL) {
+                    printf("Memory allocation failed for moves->lst_moves[%d].\n", i);
                     return NULL;
                 }
 
-                moves[i]->x = x;
-                moves[i]->y = y;
+                moves->lst_moves[i]->x = x;
+                moves->lst_moves[i]->y = y;
                 i++;
             }
         }
     }
 
-    // Terminate the array with a null pointer
-    moves[i] = NULL;
+    moves->lst_moves[i] = NULL;
+    moves->num_moves = i;
 
     return moves;
 }
@@ -66,7 +67,7 @@ Move **NextMoves(GlobalGrid game) {
 
 
 
-GlobalGrid ApplyMove (GlobalGrid game, Move pos) {
+GlobalGrid ApplyMove (GlobalGrid game, Pos pos) {
     int xg, yg;
     GlobalGrid next = game;
     xg = (pos.y / 27); // Récupère la grille globale à mettre à jour
@@ -138,13 +139,13 @@ int MiniMax(Node* node, int depth, int maximizingPlayer) {
         EvaluateMove(node);
         return node->value;
     }
+    Move *moves = NextMoves(node->state);
 
-    Move **moves = NextMoves(node->state);
 
     if (maximizingPlayer == node->state.current_player) {
         int bestValue = INT_MIN;
-        for (int i = 0; i < 8; i++) {
-            Node* child = createNode(ApplyMove(node->state, *moves[i]));
+        for (int i = 0; i < moves->num_moves; i++) {
+            Node* child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
             addSuccessor(node, child);
             int value = MiniMax(child, depth - 1, !maximizingPlayer);
             node->value = bestValue;
@@ -153,8 +154,8 @@ int MiniMax(Node* node, int depth, int maximizingPlayer) {
         return bestValue;
     } else {
         int bestValue = INT_MAX;
-        for (int i = 0; i < 8; i++) {
-            Node* child = createNode(ApplyMove(node->state, *moves[i]));
+        for (int i = 0; i < moves->num_moves; i++) {
+            Node* child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
             addSuccessor(node, child);
             int value = MiniMax(child, depth - 1, !maximizingPlayer);
             node->value = bestValue;

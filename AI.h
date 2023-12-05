@@ -25,13 +25,18 @@ typedef struct Node Node ;
 typedef struct {
     int x;
     int y;
-} Move;
+} Pos;
+
+typedef struct {
+    Pos ** lst_moves ;
+    int num_moves;
+}Move;
 
 // Prototypes de fonctions
 Node* createNode(GlobalGrid game);
 void EvaluateMove(Node *state);
-Move **NextMoves(GlobalGrid game);
-GlobalGrid ApplyMove (GlobalGrid game, Move pos);
+Move* NextMoves(GlobalGrid game);
+GlobalGrid ApplyMove (GlobalGrid game, Pos pos);
 void addSuccessor(Node* node, Node* successor);
 void displayNode(Node* node);
 void displayTree(Node* node);

@@ -17,7 +17,14 @@ enum player
 typedef struct {
     int x;
     int y;
-} Move;
+} Pos;
+
+typedef struct {
+    Pos ** lst_moves ;
+    int num_moves;
+}Move;
+
+
 
 
 // Structure pour représenter une grille locale
@@ -111,7 +118,7 @@ void display_local_grid(LocalGrid *grid)
     printf("******************************");
 }
 
-void debug_display_game(GlobalGrid *game)
+void Display_game(GlobalGrid *game)
 {
     int global, acc = 0;
     char str[256];
@@ -328,6 +335,11 @@ int possibleMove(GlobalGrid *game, int x, int y)
             // printf("Vous devez jouer dans la grille numero : %d\n",game->relative_grid);
             return 0;
         }
+        //****************! Modifs à faire ici *************/////////////////
+        // if (game->localboard[xg][yg].winner != ' ') {
+        //     // printf("Cette grille locale est déjà gagnée !\n");
+        //     return 0;
+        // }
         // printf("grille plaine ou deja gagnée");
         // return 0;
         if (game->localboard[xg][yg].board[x][y % 3] != '-')
@@ -341,84 +353,84 @@ int possibleMove(GlobalGrid *game, int x, int y)
 
 
 
-int UTTT_GAME(GlobalGrid *game)
-{
-    int x, y, xg, yg;
-    //  Afficher le joueur courant (humain ou ordinateur)
-    printf("Tour de %s de placer un %c \n", playerToString(game->current_player), game->current_player);
-    //     Afficher la grille globale
-    debug_display_game(game);
+// int UTTT_GAME(GlobalGrid *game)
+// {
+//     int x, y, xg, yg;
+//     //  Afficher le joueur courant (humain ou ordinateur)
+//     printf("Tour de %s de placer un %c \n", playerToString(game->current_player), game->current_player);
+//     //     Afficher la grille globale
+//     Display_game(game);
 
-    //     Tant que le joueur n'a pas sélectionné une case valide:
+//     //     Tant que le joueur n'a pas sélectionné une case valide:
 
-    //         Si la grille globale est pleine ou qu'il y a un gagnant:
-    //             Terminer la partie --> return 0;
+//     //         Si la grille globale est pleine ou qu'il y a un gagnant:
+//     //             Terminer la partie --> return 0;
 
-    //         Lire l'entrée du joueur pour la case à jouer
-    // avec un scanf
+//     //         Lire l'entrée du joueur pour la case à jouer
+//     // avec un scanf
 
-    do
-    {
+//     do
+//     {
 
-        printf("Choisissez une case à jouer (x, y) : ");
-        // Si la case sélectionnée n'est pas valide:
-        if (scanf("%d,%d", &x, &y) != 2)
-        {
+//         printf("Choisissez une case à jouer (x, y) : ");
+//         // Si la case sélectionnée n'est pas valide:
+//         if (scanf("%d,%d", &x, &y) != 2)
+//         {
 
-            // Afficher un message d'erreur
-            printf("Entrée invalide. Veuillez entrer les coordonnées x et y séparées par une virgule (par exemple : 1,2).\n");
-            // Vider le tampon d'entrée
-            while (getchar() != '\n')
-                ;
-        }
-    } while (!possibleMove(game, x, y));
+//             // Afficher un message d'erreur
+//             printf("Entrée invalide. Veuillez entrer les coordonnées x et y séparées par une virgule (par exemple : 1,2).\n");
+//             // Vider le tampon d'entrée
+//             while (getchar() != '\n')
+//                 ;
+//         }
+//     } while (!possibleMove(game, x, y));
 
-    //printf("x = %d,y = %d\n", x, y);
-    xg = (y / 3) / 3;
-    yg = (y / 3) % 3;
-    //printf("REGAAAAARDE : %d, %d", x, y%3);
-    //game->relative_grid = yg + (3 * xg);
-    if (isLocalGridFull(&game->localboard[x][y % 3]) || game->localboard[x][y % 3].winner != ' ')
-    {
+//     //printf("x = %d,y = %d\n", x, y);
+//     xg = (y / 3) / 3;
+//     yg = (y / 3) % 3;
+//     //printf("REGAAAAARDE : %d, %d", x, y%3);
+//     //game->relative_grid = yg + (3 * xg);
+//     if (isLocalGridFull(&game->localboard[x][y % 3]) || game->localboard[x][y % 3].winner != ' ')
+//     {
 
-        printf("grille relative plaine ou deja gagnée , le prochain coup est libre ! \n");
-        game->relative_grid = -1;
-    }
-    else
-    {
-        game->relative_grid = y % 3 + x * 3;
-    }
-    if(game->relative_grid == -1){
+//         printf("grille relative plaine ou deja gagnée , le prochain coup est libre ! \n");
+//         game->relative_grid = -1;
+//     }
+//     else
+//     {
+//         game->relative_grid = y % 3 + x * 3;
+//     }
+//     if(game->relative_grid == -1){
 
-        printf("grille relative = Choix libre \n" );
-    }
-    else{
+//         printf("grille relative = Choix libre \n" );
+//     }
+//     else{
 
-        printf("grille relative =  %d\n", game->relative_grid );
-    }
-    // printf("Grille globale numero %d --> x = %d, y = %d\n", game->relative_grid, xg, yg);
-    // printf("Grille Locale : x = %d,y = %d\n", x, y % 3);
-    y = y % 3;
-    //         Sinon:
-    //             Si la case sélectionnée est valide dans la grille globale:
-    //                 Mettre à jour la grille globale avec le coup du joueur
-    // Mettre à jour la grille locale correspondante avec le coup du joueur
-    game->localboard[xg][yg].board[x][y] = game->current_player;
-    // Vérifier si la grille locale est gagnée
-    if (LG_CheckIfWon(&game->localboard[xg][yg]))
-    {
-        printf("Grille locale gagnée par : %s\n", playerToString(game->current_player));
-        // game->relative_grid = -1;
-    }
-    //     Vérifier si la grille globale est gagnée
+//         printf("grille relative =  %d\n", game->relative_grid );
+//     }
+//     // printf("Grille globale numero %d --> x = %d, y = %d\n", game->relative_grid, xg, yg);
+//     // printf("Grille Locale : x = %d,y = %d\n", x, y % 3);
+//     y = y % 3;
+//     //         Sinon:
+//     //             Si la case sélectionnée est valide dans la grille globale:
+//     //                 Mettre à jour la grille globale avec le coup du joueur
+//     // Mettre à jour la grille locale correspondante avec le coup du joueur
+//     game->localboard[xg][yg].board[x][y] = game->current_player;
+//     // Vérifier si la grille locale est gagnée
+//     if (LG_CheckIfWon(&game->localboard[xg][yg]))
+//     {
+//         printf("Grille locale gagnée par : %s\n", playerToString(game->current_player));
+//         // game->relative_grid = -1;
+//     }
+//     //     Vérifier si la grille globale est gagnée
 
-    //     Si la grille globale est gagnée ou si elle est pleine:
-    //         Terminer la partie
+//     //     Si la grille globale est gagnée ou si elle est pleine:
+//     //         Terminer la partie
 
-    //     Changer de joueur
-    updatePlayer(game);
-    return 1;
-}
+//     //     Changer de joueur
+//     updatePlayer(game);
+//     return 1;
+// }
 //********************************** AI ********************************************************************
 Node* createNode(GlobalGrid game) {
     Node* newNode = (Node*)malloc(sizeof(Node));
@@ -437,12 +449,13 @@ void EvaluateMove(Node *state){
     state->value = 0;
 }
 
-Move **NextMoves(GlobalGrid game) {
+Move* NextMoves(GlobalGrid game) {
     int x, y, i = 0;
     int capacity = 1; 
-    Move **moves = (Move **)malloc(capacity * sizeof(Move *));
+    Move* moves = (Move*)malloc(sizeof(Move));
+    moves->lst_moves = (Pos**)malloc(capacity * sizeof(Pos*));
 
-    if (moves == NULL) {
+    if (moves == NULL || moves->lst_moves == NULL) {
         printf("Memory allocation failed for moves.\n");
         return NULL;
     }
@@ -450,30 +463,30 @@ Move **NextMoves(GlobalGrid game) {
     for (x = 0; x < 3; x++) {
         for (y = 0; y < 27; y++) {
             if (possibleMove(&game, x, y)) {
-                if (i >= capacity -1 ) {
+                if (i >= capacity - 1) {
                     capacity += 1;
-                    moves = (Move **)realloc(moves, capacity * sizeof(Move *));
-                    if (moves == NULL) {
-                        printf("Memory reallocation failed for moves.\n");
+                    moves->lst_moves = (Pos**)realloc(moves->lst_moves, capacity * sizeof(Pos*));
+                    if (moves->lst_moves == NULL) {
+                        printf("Memory reallocation failed for moves->lst_moves.\n");
                         return NULL;
                     }
                 }
 
-                moves[i] = (Move *)malloc(sizeof(Move));
-                if (moves[i] == NULL) {
-                    printf("Memory allocation failed for moves[%d].\n", i);
+                moves->lst_moves[i] = (Pos*)malloc(sizeof(Pos));
+                if (moves->lst_moves[i] == NULL) {
+                    printf("Memory allocation failed for moves->lst_moves[%d].\n", i);
                     return NULL;
                 }
 
-                moves[i]->x = x;
-                moves[i]->y = y;
+                moves->lst_moves[i]->x = x;
+                moves->lst_moves[i]->y = y;
                 i++;
             }
         }
     }
 
-    // Terminate the array with a null pointer
-    moves[i] = NULL;
+    moves->lst_moves[i] = NULL;
+    moves->num_moves = i;
 
     return moves;
 }
@@ -483,7 +496,7 @@ Move **NextMoves(GlobalGrid game) {
 
 
 
-GlobalGrid ApplyMove (GlobalGrid game, Move pos) {
+GlobalGrid ApplyMove (GlobalGrid game, Pos pos) {
     int xg, yg;
     GlobalGrid next = game;
     xg = (pos.y / 27); // Récupère la grille globale à mettre à jour
@@ -513,7 +526,7 @@ void displayNode(Node* node) {
     printf("Value : %d\n", node->value);
     printf("Nombre de successeurs : %d\n", node->num_successors);
 
-    debug_display_game(&node->state);
+    Display_game(&node->state);
 
     printf("Successeurs: ");
     for (int i = 0; i < node->num_successors; i++) {
@@ -555,13 +568,13 @@ int MiniMax(Node* node, int depth, int maximizingPlayer) {
         EvaluateMove(node);
         return node->value;
     }
+    Move *moves = NextMoves(node->state);
 
-    Move **moves = NextMoves(node->state);
 
     if (maximizingPlayer == node->state.current_player) {
         int bestValue = INT_MIN;
-        for (int i = 0; i < 8; i++) {
-            Node* child = createNode(ApplyMove(node->state, *moves[i]));
+        for (int i = 0; i < moves->num_moves; i++) {
+            Node* child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
             addSuccessor(node, child);
             int value = MiniMax(child, depth - 1, !maximizingPlayer);
             node->value = bestValue;
@@ -570,8 +583,8 @@ int MiniMax(Node* node, int depth, int maximizingPlayer) {
         return bestValue;
     } else {
         int bestValue = INT_MAX;
-        for (int i = 0; i < 8; i++) {
-            Node* child = createNode(ApplyMove(node->state, *moves[i]));
+        for (int i = 0; i < moves->num_moves; i++) {
+            Node* child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
             addSuccessor(node, child);
             int value = MiniMax(child, depth - 1, !maximizingPlayer);
             node->value = bestValue;
@@ -580,12 +593,107 @@ int MiniMax(Node* node, int depth, int maximizingPlayer) {
         return bestValue;
     }
 }
+
+
+
+int UTTT_GAME(GlobalGrid *game) {
+    Move *moves = NextMoves(*game);
+
+    printf("Tour de %s de placer un %c \n", playerToString(game->current_player), game->current_player);
+    Display_game(game);
+
+    if (game->current_player == HUMAN) {
+        int x, y, xg, yg;
+
+        do {
+            printf("Choisissez une case à jouer (x, y) : ");
+            if (scanf("%d,%d", &x, &y) != 2) {
+                printf("Entrée invalide. Veuillez entrer les coordonnées x et y séparées par une virgule (par exemple : 1,2).\n");
+                while (getchar() != '\n');
+            }
+        } while (!possibleMove(game, x, y));
+
+        xg = (y / 3) / 3;
+        yg = (y / 3) % 3;
+
+        if (isLocalGridFull(&game->localboard[x][y % 3]) || game->localboard[x][y % 3].winner != ' ') {
+            printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre ! \n");
+            game->relative_grid = -1;
+        } else {
+            game->relative_grid = y % 3 + x * 3;
+        }
+
+        if (game->relative_grid == -1) {
+            printf("Grille relative = Choix libre \n");
+        } else {
+            printf("Grille relative = %d\n", game->relative_grid);
+        }
+
+        game->localboard[xg][yg].board[x][y % 3] = game->current_player;
+
+        if (LG_CheckIfWon(&game->localboard[xg][yg])) {
+            printf("Grille locale gagnée par : %s\n", playerToString(game->current_player));
+        }
+
+        updatePlayer(game);
+    } else {
+        printf("Mouvements disponibles :\n");
+        for (int i = 0; moves->lst_moves[i] != NULL; i++) {
+            printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+        }
+        printf("\n");
+
+        int depth = 3; // Set your desired depth for MiniMax
+
+        Node* root = createNode(*game);
+        int bestMove = MiniMax(root, depth, game->current_player);
+
+        printf("Le meilleur mouvement suggéré par MiniMax est : (%d,%d)\n", moves->lst_moves[bestMove]->x, moves->lst_moves[bestMove]->y);
+
+        int x = moves->lst_moves[bestMove]->x;
+        int y = moves->lst_moves[bestMove]->y;
+
+        int xg = (y / 3) / 3;
+        int yg = (y / 3) % 3;
+
+        if (isLocalGridFull(&game->localboard[x][y % 3]) || game->localboard[x][y % 3].winner != ' ') {
+            printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre ! \n");
+            game->relative_grid = -1;
+        } else {
+            game->relative_grid = y % 3 + x * 3;
+        }
+
+        if (game->relative_grid == -1) {
+            printf("Grille relative = Choix libre \n");
+        } else {
+            printf("Grille relative = %d\n", game->relative_grid);
+        }
+
+        game->localboard[xg][yg].board[x][y % 3] = game->current_player;
+
+        if (LG_CheckIfWon(&game->localboard[xg][yg])) {
+            printf("Grille locale gagnée par : %s\n", playerToString(game->current_player));
+        }
+
+        updatePlayer(game);
+    }
+
+    // Clean up allocated memory for moves
+    for (int i = 0; moves->lst_moves[i] != NULL; i++) {
+        free(moves->lst_moves[i]);
+    }
+    free(moves->lst_moves);
+    free(moves);
+
+    return 1;
+}
+
 //********************************** AI ********************************************************************
 
 
 int main() {
     GlobalGrid game = initialize_global_grid();
-    Node* root = createNode(game);
+    //Node* root = createNode(game);
 
     // Appliquer des mouvements à la grille (si nécessaire)
 
@@ -593,29 +701,9 @@ int main() {
         UTTT_GAME(&game); // Votre logique de jeu en boucle
 
         if (game_CheckIfWon(&game) || isGlobalGridFull(game)) {
-            debug_display_game(&game);
+            Display_game(&game);
             break;
         }
-
-        Move **moves = NextMoves(game);
-        printf("Mouvements disponibles :\n");
-        for (int i = 0; moves[i] != NULL; i++) {
-            printf("(%d,%d) ", moves[i]->x, moves[i]->y);
-        }
-        printf("\n");
-
-        // Appliquer MiniMax pour évaluer le meilleur mouvement à faire
-        int depth = 3; // Profondeur maximale pour l'algorithme MiniMax
-        int bestMove = MiniMax(root, depth, 0); // Remplacez HUMAN par le joueur qui doit jouer ensuite
-
-        // Ici, vous avez le meilleur mouvement calculé par MiniMax dans la variable bestMove
-        printf("Le meilleur mouvement suggéré par MiniMax est : (%d,%d)\n", moves[bestMove]->x, moves[bestMove]->y);
-
-        // Libérer la mémoire des mouvements
-        for (int i = 0; moves[i] != NULL; i++) {
-            free(moves[i]);
-        }
-        free(moves);
     }
 
     return 0;
