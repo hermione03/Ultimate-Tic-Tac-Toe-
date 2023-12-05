@@ -25,7 +25,7 @@ typedef struct Node Node ;
 typedef struct {
     int x;
     int y;
-} Pos;
+}Pos;
 
 typedef struct {
     Pos ** lst_moves ;

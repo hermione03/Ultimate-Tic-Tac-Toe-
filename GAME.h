@@ -3,7 +3,11 @@
 #define UTTT_H
 
 // Inclusions de bibliothèques
+#include <stdio.h>
+#include <time.h>
+#include "LocalGrid.h"
 #include "GlobalGrid.h"
+#include "AI.h"
 
 
 
@@ -17,7 +21,10 @@ enum player {
 char *playerToString(enum player p);
 void updatePlayer(GlobalGrid *game);
 int possibleMove(GlobalGrid *game, int x, int y);
-int UTTT_GAME(GlobalGrid *game);
+Pos random_pick_move(GlobalGrid *game);
+Pos human_pick_move(GlobalGrid *game);
+Pos minimax_pick_move(GlobalGrid *game);
+int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)());
 
 #endif /* UTTT_H */
 
