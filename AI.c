@@ -74,8 +74,8 @@ GlobalGrid ApplyMove(GlobalGrid game, Pos pos)
 {
     int xg, yg;
     GlobalGrid next = game;
-    xg = (pos.y / 27);       // Récupère la grille globale à mettre à jour
-    yg = ((pos.y % 27) / 3); // Récupère la position de la localboard dans la grille globale
+    xg = (pos.y / 3) / 3;// Récupère la grille globale à mettre à jour
+    yg = (pos.y / 3) % 3;// Récupère la position de la localboard dans la grille globale
     int x = pos.x;
     int y = (pos.y % 3);
 
