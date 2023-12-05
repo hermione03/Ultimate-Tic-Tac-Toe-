@@ -5,9 +5,22 @@
 #include "LocalGrid.h"
 #include "GAME.h"
 
-
-
-
+GlobalGrid test_initialize_global_grid()
+{
+    GlobalGrid game;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            initialize_local_grid(&game.localboard[i][j]);
+        }
+    }
+    game.current_player = HUMAN;
+    game.winner = ' ';
+    game.relative_grid = -1;
+    // memset(game.localboard, '-', sizeof(game.localboard));
+    return game;
+}
 GlobalGrid initialize_global_grid()
 {
     GlobalGrid game;
@@ -18,30 +31,35 @@ GlobalGrid initialize_global_grid()
             initialize_local_grid(&game.localboard[i][j]);
         }
     }
-    game.localboard[0][0].board[1][1] = 'X';
-    game.localboard[0][0].board[2][2] = 'X';
+    game.localboard[0][0].winner = 'X';
 
-    game.localboard[0][1].board[0][0] = 'X';
-    game.localboard[0][1].board[0][1] = 'X';
-    game.localboard[0][1].board[0][2] = 'O';
+    game.localboard[0][1].board[0][0] = 'O';
+    game.localboard[0][1].board[0][1] = 'O';
+    game.localboard[0][1].board[0][2] = 'X';
+    game.localboard[0][1].board[1][0] = 'X';
+    game.localboard[0][1].board[1][1] = 'X';
 
-    game.localboard[0][2].board[2][0] = 'X';
+    game.localboard[0][2].winner = 'O';
 
-    game.localboard[1][1].board[1][1] = 'X';
-    game.localboard[1][1].winner = 'X';
+    game.localboard[1][0].winner = 'O';
 
-    game.localboard[2][0].board[1][1] = 'O';
-    game.localboard[2][0].winner = 'O';
+    game.localboard[1][1].board[0][0] = 'O';
+    game.localboard[1][1].board[0][1] = 'X';
+    game.localboard[1][1].board[0][2] = 'O';
+    game.localboard[1][1].board[1][0] = 'O';
 
-    game.localboard[2][1].board[1][1] = 'O';
-    game.localboard[2][1].winner = 'O';
+    game.localboard[1][2].board[0][2] = 'X';
 
-    game.localboard[2][2].board[0][2] = 'O';
+    // game.localboard[2][0].board[1][1] = 'O';
+    // game.localboard[2][0].winner = 'O';
+
+    game.localboard[2][0].board[0][0] = 'O';
+
     game.localboard[2][2].board[0][0] = 'O';
 
-    game.current_player = 'O';
+    game.current_player = HUMAN;
     game.winner = ' ';
-    game.relative_grid = -1;
+    game.relative_grid = 2;
     // memset(game.localboard, '-', sizeof(game.localboard));
     return game;
 }
@@ -93,7 +111,6 @@ void Display_game(GlobalGrid *game)
     printf("\n");
 }
 
-
 int isGlobalGridFull(GlobalGrid game)
 {
     // printf("isGlobalGridFull\n");
@@ -109,7 +126,6 @@ int isGlobalGridFull(GlobalGrid game)
     }
     return 1; // Toutes les grilles locales sont pleines, la grille globale est pleine
 }
-
 
 int game_CheckIfWon(GlobalGrid *game)
 {
@@ -163,6 +179,3 @@ int game_CheckIfWon(GlobalGrid *game)
 
     return 0;
 }
-
-
-
