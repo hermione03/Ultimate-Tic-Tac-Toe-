@@ -22,15 +22,7 @@ struct Node
 };
 typedef struct Node Node ;
 
-typedef struct {
-    int x;
-    int y;
-}Pos;
 
-typedef struct {
-    Pos ** lst_moves ;
-    int num_moves;
-}Move;
 
 // Prototypes de fonctions
 Node* createNode(GlobalGrid game);
@@ -41,6 +33,6 @@ void addSuccessor(Node* node, Node* successor);
 void displayNode(Node* node);
 void displayTree(Node* node);
 void freeTree(Node* root);
-int MiniMax(Node* node, int depth, int maximizingPlayer);
+Node *MiniMax(Node *node, int depth, int maximizingPlayer);
 
 #endif /* AI_H */

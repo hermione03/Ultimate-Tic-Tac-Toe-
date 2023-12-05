@@ -5,7 +5,7 @@
 #include "LocalGrid.h"
 #include "GAME.h"
 
-GlobalGrid test_initialize_global_grid()
+GlobalGrid initialize_global_grid()
 {
     GlobalGrid game;
     for (int i = 0; i < 3; i++)
@@ -17,11 +17,12 @@ GlobalGrid test_initialize_global_grid()
     }
     game.current_player = HUMAN;
     game.winner = ' ';
-    game.relative_grid = -1;
+    game.relative_grid = 2;
     // memset(game.localboard, '-', sizeof(game.localboard));
     return game;
 }
-GlobalGrid initialize_global_grid()
+
+GlobalGrid test_initialize_global_grid()
 {
     GlobalGrid game;
     for (int i = 0; i < 3; i++)
@@ -32,6 +33,7 @@ GlobalGrid initialize_global_grid()
         }
     }
     game.localboard[0][0].winner = 'X';
+    game.localboard[0][0].board[1][1] = 'X';
 
     game.localboard[0][1].board[0][0] = 'O';
     game.localboard[0][1].board[0][1] = 'O';
@@ -40,8 +42,10 @@ GlobalGrid initialize_global_grid()
     game.localboard[0][1].board[1][1] = 'X';
 
     game.localboard[0][2].winner = 'O';
+    game.localboard[0][2].board[1][1] = 'O';
 
     game.localboard[1][0].winner = 'O';
+    game.localboard[1][0].board[1][1] = 'O';
 
     game.localboard[1][1].board[0][0] = 'O';
     game.localboard[1][1].board[0][1] = 'X';
@@ -59,7 +63,7 @@ GlobalGrid initialize_global_grid()
 
     game.current_player = HUMAN;
     game.winner = ' ';
-    game.relative_grid = 2;
+    game.relative_grid = -1;
     // memset(game.localboard, '-', sizeof(game.localboard));
     return game;
 }

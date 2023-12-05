@@ -7,15 +7,25 @@
 #include <time.h>
 #include "LocalGrid.h"
 #include "GlobalGrid.h"
-#include "AI.h"
-
-
 
 // Enumération pour les joueurs
-enum player {
+enum player
+{
     COMPUTER = 'O',
     HUMAN = 'X',
 };
+
+typedef struct
+{
+    int x;
+    int y;
+} Pos;
+
+typedef struct
+{
+    Pos **lst_moves;
+    int num_moves;
+} Move;
 
 // Prototypes de fonctions
 char *playerToString(enum player p);
@@ -27,4 +37,3 @@ Pos minimax_pick_move(GlobalGrid *game);
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)());
 
 #endif /* UTTT_H */
-

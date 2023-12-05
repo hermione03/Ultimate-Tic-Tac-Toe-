@@ -3,16 +3,23 @@
 #include "GAME.h"
 #include "AI.h"
 
-
-int main() {
+int main()
+{
+    // Initialisation de la graine pour rand()
+    srand(time(0));
     GlobalGrid game = initialize_global_grid();
 
-    while (1) {
-        UTTT_GAME(&game, random_pick_move, minimax_pick_move);
+    while (1)
+    {
 
-        if (game_CheckIfWon(&game) || isGlobalGridFull(game)) {
+        if (game_CheckIfWon(&game) || isGlobalGridFull(game))
+        {
             Display_game(&game);
             break;
+        }
+        else
+        {
+            UTTT_GAME(&game, random_pick_move, minimax_pick_move);
         }
     }
 
