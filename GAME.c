@@ -64,12 +64,12 @@ Pos random_pick_move(GlobalGrid *game)
 {
     Pos pos;
     Move *moves = NextMoves(*game);
-    printf("Mouvements disponibles :\n");
-    for (int i = 0; moves->lst_moves[i] != NULL; i++)
-    {
-        printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-    }
-    printf("\n");
+    // printf("Mouvements disponibles :\n");
+    //  for (int i = 0; moves->lst_moves[i] != NULL; i++)
+    //  {
+    //      printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+    //  }
+    //  printf("\n");
 
     // Générer un indice aléatoire dans la liste des mouvements disponibles
     int random_index = rand() % moves->num_moves;
@@ -116,7 +116,7 @@ Pos minimax_pick_move(GlobalGrid *game)
     }
     printf("\n");
 
-    int depth = 3; // Set your desired depth for MiniMax
+    int depth = 5; // Set your desired depth for MiniMax
 
     Node *root = createNode(*game);
     Node *bestMove = MiniMax(root, depth, game->current_player);
@@ -128,9 +128,10 @@ Pos minimax_pick_move(GlobalGrid *game)
         y = moves->lst_moves[i]->y;
         xg = (y / 3) / 3;
         yg = (y / 3) % 3;
+        // if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
         if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
         {
-            printf("Le meilleur mouvement suggéré par MiniMax est : (%d,%d)\n", x, y);
+            // printf("Le meilleur mouvement suggéré par MiniMax est : (%d,%d)\n", x, y);
             pos.x = x;
             pos.y = y;
             return pos;
@@ -145,11 +146,11 @@ Pos minimax_pick_move(GlobalGrid *game)
     free(moves);
 
     // Dans le cas improbable où aucun mouvement valide n'a été trouvé, retourner une position nulle
+    displayTree(root);
     pos.x = -1;
     pos.y = -1;
     return pos;
 }
-
 
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)())
 {
@@ -176,17 +177,18 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
     int xg = (y / 3) / 3;
     int yg = (y / 3) % 3;
 
-    if (isLocalGridFull(&game->localboard[x][y % 3]) || !LG_CheckIfWon(&game->localboard[x][y % 3]))
+    if (isLocalGridFull(&game->localboard[x][y % 3]) || LG_CheckIfWon(&game->localboard[x][y % 3]))
     {
-        printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre ! \n");
+        printf("Grille etudiée : (%d,%d)\n", x, y % 3);
+        printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(&game->localboard[x][y % 3]), LG_CheckIfWon(&game->localboard[x][y % 3]));
         game->relative_grid = -1;
     }
     else
     {
-        printf("***********Grille locale : %d %d\n", x, y % 3);
-        printf("***********Winner : %c\n", game->localboard[x][y % 3].winner);
+        // printf("***********Grille locale : %d %d\n", x, y % 3);
+        // printf("***********Winner : %c\n", game->localboard[x][y % 3].winner);
         game->relative_grid = y % 3 + x * 3;
-        printf("relaaaaaative : %d\n", game->relative_grid);
+        // printf("relaaaaaative : %d\n", game->relative_grid);
     }
 
     if (game->relative_grid == -1)

@@ -127,9 +127,9 @@ void EvaluateMove(Node *curr)
 
 void evaluateGame(Node *curr)
 {
-    int evale = 0, i = 0;
+    int evale = 0;
     float evaluatorMul[] = {1.4, 1, 1.4, 1, 1.75, 1, 1.4, 1, 1.4};
-    LocalGrid *mainBd; // Utilisation de LocalGrid au lieu de int mainBd[9];
+    LocalGrid *mainBd = malloc(sizeof(LocalGrid)); // Utilisation de LocalGrid au lieu de int mainBd[9];
     initialize_local_grid(mainBd);
 
     for (int row = 0; row < 3; row++)
@@ -138,12 +138,7 @@ void evaluateGame(Node *curr)
         {
             int currentPos = row * 3 + col;
             evale += realEvaluateSquare(&curr->state.localboard[row][col]) * 1.5 * evaluatorMul[currentPos];
-            if (curr->state.relative_grid != -1)
-            {
-                printf("choix libre !\n");
-            }
-
-            if (currentPos == curr->state.relative_grid)
+            if (currentPos == curr->state.relative_grid && curr->state.relative_grid != -1)
             {
                 evale += realEvaluateSquare(&curr->state.localboard[row][col]) * evaluatorMul[currentPos];
             }
@@ -163,6 +158,7 @@ void evaluateGame(Node *curr)
     // Utilisation des instances LocalGrid pour les calculs
     evale -= checkWinCondition(mainBd) * 5000;
     evale += realEvaluateSquare(mainBd) * 150;
+    free(mainBd);
 
     curr->value = evale;
 }
@@ -248,6 +244,9 @@ void addSuccessor(Node *node, Node *successor)
 
 void displayNode(Node *node)
 {
+    printf("--------------- Node ------------------------\n");
+    printf("Winner ? %c\n ", node->state.winner);
+    printf("Current player ? %c\n ", node->state.current_player);
     printf("Value : %d\n", node->value);
     printf("Nombre de successeurs : %d\n", node->num_successors);
 
@@ -259,10 +258,12 @@ void displayNode(Node *node)
         printf("Successeur %d, ", i + 1);
     }
     printf("\n");
+    printf("-------------------------------------------------------\n");
 }
 
 void displayTree(Node *node)
 {
+    printf("--------------- Tree ------------------------\n");
     if (node == NULL)
     {
         return;
@@ -274,6 +275,7 @@ void displayTree(Node *node)
     {
         displayTree(node->successors[i]);
     }
+    printf("-------------------------------------------------------\n");
 }
 
 void freeTree(Node *root)
