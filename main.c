@@ -7,6 +7,7 @@ int main()
 {
     // Initialisation de la graine pour rand()
     srand(time(0));
+    int depth = 3;
     GlobalGrid game = initialize_global_grid();
 
     while (1)
@@ -19,7 +20,7 @@ int main()
         }
         else
         {
-            UTTT_GAME(&game, random_pick_move, alphaBeta_pick_move);
+            UTTT_GAME(&game, random_pick_move, alphaBeta_pick_move, depth);
         }
     }
 

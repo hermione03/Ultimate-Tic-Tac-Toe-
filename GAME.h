@@ -15,6 +15,7 @@ enum player
     HUMAN = 'X',
 };
 
+// Définition des structures pour les positions de jeu et les mouvements possibles
 typedef struct
 {
     int x;
@@ -27,14 +28,14 @@ typedef struct
     int num_moves;
 } Move;
 
-// Prototypes de fonctions
+// Prototypes de fonctions pour la manipulation des joueurs et des mouvements
 char *playerToString(enum player p);
 void updatePlayer(GlobalGrid *game);
 int possibleMove(GlobalGrid *game, int x, int y);
-Pos random_pick_move(GlobalGrid *game);
-Pos human_pick_move(GlobalGrid *game);
-Pos minimax_pick_move(GlobalGrid *game);
-Pos alphaBeta_pick_move(GlobalGrid *game);
-int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)());
+Pos random_pick_move(GlobalGrid *game);               // pour des mouvement aleatoirs
+Pos human_pick_move(GlobalGrid *game);                // pour qu'un humain puisse jouer
+Pos minimax_pick_move(GlobalGrid *game, int depth);   // MiniMax sans elagage
+Pos alphaBeta_pick_move(GlobalGrid *game, int depth); // MiniMax AVEC elagage AlphaBeta
+int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth);
 
 #endif /* UTTT_H */

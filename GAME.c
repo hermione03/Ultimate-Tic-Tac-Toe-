@@ -104,7 +104,7 @@ Pos human_pick_move(GlobalGrid *game)
     return pos;
 }
 
-Pos minimax_pick_move(GlobalGrid *game)
+Pos minimax_pick_move(GlobalGrid *game, int depth)
 {
     int i, x, y, xg, yg;
     Pos pos;
@@ -116,7 +116,7 @@ Pos minimax_pick_move(GlobalGrid *game)
     }
     printf("\n");
 
-    int depth = 5; // Set your desired depth for MiniMax
+    // int depth = 5; // Set your desired depth for MiniMax
 
     Node *root = createNode(*game);
     Node *bestMove = MiniMax(root, depth, game->current_player);
@@ -151,7 +151,7 @@ Pos minimax_pick_move(GlobalGrid *game)
     pos.y = -1;
     return pos;
 }
-Pos alphaBeta_pick_move(GlobalGrid *game)
+Pos alphaBeta_pick_move(GlobalGrid *game, int depth)
 {
     int i, x, y, xg, yg;
     Pos pos;
@@ -162,8 +162,6 @@ Pos alphaBeta_pick_move(GlobalGrid *game)
         printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
     }
     printf("\n");
-
-    int depth = 5; // Set your desired depth for MiniMax
 
     Node *root = createNode(*game);
     Node *bestMove = AlphaBeta(root, depth, INT_MIN, INT_MAX, game->current_player);
@@ -199,7 +197,7 @@ Pos alphaBeta_pick_move(GlobalGrid *game)
     return pos;
 }
 
-int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)())
+int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth)
 {
     Move *moves = NextMoves(*game);
 
@@ -211,11 +209,25 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
 
     if (game->current_player == HUMAN)
     {
-        chosenMove = player1_pick_move(game); // Obtenir le mouvement du joueur 1
+        if (player1_pick_move == minimax_pick_move || player1_pick_move == alphaBeta_pick_move)
+        {
+            chosenMove = player1_pick_move(game, depth); // Obtenir le mouvement du joueur 1
+        }
+        else
+        {
+            chosenMove = player1_pick_move(game); // Obtenir le mouvement du joueur 1
+        }
     }
     else
     {
-        chosenMove = player2_pick_move(game); // Obtenir le mouvement du joueur 2
+        if (player2_pick_move == minimax_pick_move || player2_pick_move == alphaBeta_pick_move)
+        {
+            chosenMove = player1_pick_move(game, depth); // Obtenir le mouvement du joueur 2
+        }
+        else
+        {
+            chosenMove = player1_pick_move(game); // Obtenir le mouvement du joueur 2
+        }
     }
 
     x = chosenMove.x;
