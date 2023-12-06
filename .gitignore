@@ -1,11 +1,4 @@
-pwet
-interf.h
-interf.c
-.vscode/launch.json
-.vscode/settings.json
-.vscode/tasks.json
-GAME.o
-.gitignore
-.gitignore
-GlobalGrid.o
-LocalGrid.o
+.vscode/
+*.o
+interf.*
+Ultimate_TicTacToe
