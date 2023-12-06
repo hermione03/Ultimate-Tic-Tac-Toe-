@@ -18,21 +18,23 @@ struct Node
     int value;
     int num_successors;
     int capacity;
-    struct Node** successors;
+    struct Node **successors;
 };
-typedef struct Node Node ;
-
-
+typedef struct Node Node;
 
 // Prototypes de fonctions
-Node* createNode(GlobalGrid game);
+Node *createNode(GlobalGrid game);
+int giveValue(enum player p);
+int checkWinCondition(LocalGrid *lcState);
+int realEvaluateSquare(LocalGrid *lcState);
 void EvaluateMove(Node *state);
-Move* NextMoves(GlobalGrid game);
-GlobalGrid ApplyMove (GlobalGrid game, Pos pos);
-void addSuccessor(Node* node, Node* successor);
-void displayNode(Node* node);
-void displayTree(Node* node);
-void freeTree(Node* root);
+void evaluateGame(Node *curr);
+Move *NextMoves(GlobalGrid game);
+GlobalGrid ApplyMove(GlobalGrid game, Pos pos);
+void addSuccessor(Node *node, Node *successor);
+void displayNode(Node *node);
+void displayTree(Node *node);
+void freeTree(Node *root);
 Node *MiniMax(Node *node, int depth, int maximizingPlayer);
 
 #endif /* AI_H */

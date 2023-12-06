@@ -15,9 +15,156 @@ Node *createNode(GlobalGrid game)
     return newNode;
 }
 
-void EvaluateMove(Node *state)
+int giveValue(enum player p)
 {
-    state->value = 0;
+    if (p == HUMAN)
+    {
+        return 1;
+    }
+    if (p == COMPUTER)
+    {
+        return -1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int checkWinCondition(LocalGrid *lcState)
+{
+    LG_CheckIfWon(lcState);
+    if (lcState->winner == COMPUTER)
+    {
+        return -1;
+    }
+    else if (lcState->winner == HUMAN)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int realEvaluateSquare(LocalGrid *lcState)
+{
+    int evaluation = 0;
+    int poids[] = {0.2, 0.17, 0.2, 0.17, 0.22, 0.17, 0.2, 0.17, 0.2};
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            evaluation -= giveValue((lcState->board[i][j])) * poids[i * 3 + j];
+        }
+    }
+
+    int a = 2;
+    if (giveValue(lcState->board[0][0]) + giveValue(lcState->board[0][1]) + giveValue(lcState->board[0][2]) == a || giveValue(lcState->board[1][0]) + giveValue(lcState->board[1][1]) + giveValue(lcState->board[1][2]) == a || giveValue(lcState->board[2][0]) + giveValue(lcState->board[2][1]) + giveValue(lcState->board[2][2]) == a)
+    {
+        evaluation -= 6;
+    }
+    if (giveValue(lcState->board[0][0]) + giveValue(lcState->board[1][0]) + giveValue(lcState->board[2][0]) == a || giveValue(lcState->board[0][1]) + giveValue(lcState->board[1][1]) + giveValue(lcState->board[2][1]) == a || giveValue(lcState->board[0][2]) + giveValue(lcState->board[1][2]) + giveValue(lcState->board[2][2]) == a)
+    {
+        evaluation -= 6;
+    }
+    if (giveValue(lcState->board[0][0]) + giveValue(lcState->board[1][1]) + giveValue(lcState->board[2][2]) == a || giveValue(lcState->board[0][2]) + giveValue(lcState->board[1][1]) + giveValue(lcState->board[2][0]) == a)
+    {
+        evaluation -= 7;
+    }
+
+    a = -1;
+    if (giveValue((lcState->board[0][0]) + giveValue(lcState->board[0][1]) == 2 * a && giveValue(lcState->board[0][2]) == -a) || giveValue((lcState->board[0][1]) + giveValue(lcState->board[0][2]) == 2 * a && giveValue(lcState->board[0][0]) == -a) || giveValue((lcState->board[0][0]) + giveValue(lcState->board[0][2]) == 2 * a && giveValue(lcState->board[0][1]) == -a) ||
+        giveValue((lcState->board[1][0]) + giveValue(lcState->board[1][1]) == 2 * a && giveValue(lcState->board[1][2]) == -a) || giveValue((lcState->board[1][0]) + giveValue(lcState->board[1][2]) == 2 * a && giveValue(lcState->board[1][1]) == -a) || giveValue((lcState->board[1][1]) + giveValue(lcState->board[1][2]) == 2 * a && giveValue(lcState->board[1][0]) == -a) ||
+        giveValue((lcState->board[2][0]) + giveValue(lcState->board[2][1]) == 2 * a && giveValue(lcState->board[2][2]) == -a) || giveValue((lcState->board[2][0]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[2][1]) == -a) || giveValue((lcState->board[2][1]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[2][0]) == -a) ||
+        giveValue((lcState->board[0][0]) + giveValue(lcState->board[1][0]) == 2 * a && giveValue(lcState->board[2][0]) == -a) || giveValue((lcState->board[0][0]) + giveValue(lcState->board[2][0]) == 2 * a && giveValue(lcState->board[1][0]) == -a) || giveValue((lcState->board[1][0]) + giveValue(lcState->board[2][0]) == 2 * a && giveValue(lcState->board[0][0]) == -a) ||
+        giveValue((lcState->board[0][1]) + giveValue(lcState->board[1][1]) == 2 * a && giveValue(lcState->board[2][1]) == -a) || giveValue((lcState->board[0][1]) + giveValue(lcState->board[2][1]) == 2 * a && giveValue(lcState->board[1][1]) == -a) || giveValue((lcState->board[1][1]) + giveValue(lcState->board[2][1]) == 2 * a && giveValue(lcState->board[0][1]) == -a) ||
+        giveValue((lcState->board[0][2]) + giveValue(lcState->board[1][2]) == 2 * a && giveValue(lcState->board[2][2]) == -a) || giveValue((lcState->board[0][2]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[1][2]) == -a) || giveValue((lcState->board[1][2]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[0][2]) == -a) ||
+        giveValue((lcState->board[0][0]) + giveValue(lcState->board[1][1]) == 2 * a && giveValue(lcState->board[2][2]) == -a) || giveValue((lcState->board[0][0]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[1][1]) == -a) || giveValue((lcState->board[1][1]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[0][0]) == -a) ||
+        giveValue((lcState->board[0][2]) + giveValue(lcState->board[1][1]) == 2 * a && giveValue(lcState->board[2][0]) == -a) || giveValue((lcState->board[0][2]) + giveValue(lcState->board[2][0]) == 2 * a && giveValue(lcState->board[1][1]) == -a) || giveValue((lcState->board[1][1]) + giveValue(lcState->board[2][0]) == 2 * a && giveValue(lcState->board[0][2]) == -a))
+    {
+        evaluation -= 9;
+    }
+
+    a = -2;
+    if (giveValue(lcState->board[0][0]) + giveValue(lcState->board[0][1]) + giveValue(lcState->board[0][2]) == a || giveValue(lcState->board[1][0]) + giveValue(lcState->board[1][1]) + giveValue(lcState->board[1][2]) == a || giveValue(lcState->board[2][0]) + giveValue(lcState->board[2][1]) + giveValue(lcState->board[2][2]) == a)
+    {
+        evaluation += 6;
+    }
+    if (giveValue(lcState->board[0][0]) + giveValue(lcState->board[1][0]) + giveValue(lcState->board[2][0]) == a || giveValue(lcState->board[0][1]) + giveValue(lcState->board[1][1]) + giveValue(lcState->board[2][1]) == a || giveValue(lcState->board[0][2]) + giveValue(lcState->board[1][2]) + giveValue(lcState->board[2][2]) == a)
+    {
+        evaluation += 6;
+    }
+    if (giveValue(lcState->board[0][0]) + giveValue(lcState->board[1][1]) + giveValue(lcState->board[2][2]) == a || giveValue(lcState->board[0][2]) + giveValue(lcState->board[1][1]) + giveValue(lcState->board[2][0]) == a)
+    {
+        evaluation += 7;
+    }
+
+    a = 1;
+    if (giveValue((lcState->board[0][0]) + giveValue(lcState->board[0][1]) == 2 * a && giveValue(lcState->board[0][2]) == -a) || giveValue((lcState->board[0][1]) + giveValue(lcState->board[0][2]) == 2 * a && giveValue(lcState->board[0][0]) == -a) || giveValue((lcState->board[0][0]) + giveValue(lcState->board[0][2]) == 2 * a && giveValue(lcState->board[0][1]) == -a) ||
+        giveValue((lcState->board[1][0]) + giveValue(lcState->board[1][1]) == 2 * a && giveValue(lcState->board[1][2]) == -a) || giveValue((lcState->board[1][0]) + giveValue(lcState->board[1][2]) == 2 * a && giveValue(lcState->board[1][1]) == -a) || giveValue((lcState->board[1][1]) + giveValue(lcState->board[1][2]) == 2 * a && giveValue(lcState->board[1][0]) == -a) ||
+        giveValue((lcState->board[2][0]) + giveValue(lcState->board[2][1]) == 2 * a && giveValue(lcState->board[2][2]) == -a) || giveValue((lcState->board[2][0]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[2][1]) == -a) || giveValue((lcState->board[2][1]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[2][0]) == -a) ||
+        giveValue((lcState->board[0][0]) + giveValue(lcState->board[1][0]) == 2 * a && giveValue(lcState->board[2][0]) == -a) || giveValue((lcState->board[0][0]) + giveValue(lcState->board[2][0]) == 2 * a && giveValue(lcState->board[1][0]) == -a) || giveValue((lcState->board[1][0]) + giveValue(lcState->board[2][0]) == 2 * a && giveValue(lcState->board[0][0]) == -a) ||
+        giveValue((lcState->board[0][1]) + giveValue(lcState->board[1][1]) == 2 * a && giveValue(lcState->board[2][1]) == -a) || giveValue((lcState->board[0][1]) + giveValue(lcState->board[2][1]) == 2 * a && giveValue(lcState->board[1][1]) == -a) || giveValue((lcState->board[1][1]) + giveValue(lcState->board[2][1]) == 2 * a && giveValue(lcState->board[0][1]) == -a) ||
+        giveValue((lcState->board[0][2]) + giveValue(lcState->board[1][2]) == 2 * a && giveValue(lcState->board[2][2]) == -a) || giveValue((lcState->board[0][2]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[1][2]) == -a) || giveValue((lcState->board[1][2]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[0][2]) == -a) ||
+        giveValue((lcState->board[0][0]) + giveValue(lcState->board[1][1]) == 2 * a && giveValue(lcState->board[2][2]) == -a) || giveValue((lcState->board[0][0]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[1][1]) == -a) || giveValue((lcState->board[1][1]) + giveValue(lcState->board[2][2]) == 2 * a && giveValue(lcState->board[0][0]) == -a) ||
+        giveValue((lcState->board[0][2]) + giveValue(lcState->board[1][1]) == 2 * a && giveValue(lcState->board[2][0]) == -a) || giveValue((lcState->board[0][2]) + giveValue(lcState->board[2][0]) == 2 * a && giveValue(lcState->board[1][1]) == -a) || giveValue((lcState->board[1][1]) + giveValue(lcState->board[2][0]) == 2 * a && giveValue(lcState->board[0][2]) == -a))
+    {
+        evaluation += 9;
+    }
+
+    evaluation -= checkWinCondition(lcState) * 12;
+
+    return evaluation;
+}
+
+void EvaluateMove(Node *curr)
+{
+    curr->value = 0;
+}
+
+void evaluateGame(Node *curr)
+{
+    int evale = 0, i = 0;
+    float evaluatorMul[] = {1.4, 1, 1.4, 1, 1.75, 1, 1.4, 1, 1.4};
+    LocalGrid *mainBd; // Utilisation de LocalGrid au lieu de int mainBd[9];
+    initialize_local_grid(mainBd);
+
+    for (int row = 0; row < 3; row++)
+    {
+        for (int col = 0; col < 3; col++)
+        {
+            int currentPos = row * 3 + col;
+            evale += realEvaluateSquare(&curr->state.localboard[row][col]) * 1.5 * evaluatorMul[currentPos];
+            if (curr->state.relative_grid != -1)
+            {
+                printf("choix libre !\n");
+            }
+
+            if (currentPos == curr->state.relative_grid)
+            {
+                evale += realEvaluateSquare(&curr->state.localboard[row][col]) * evaluatorMul[currentPos];
+            }
+            int tmpEv = checkWinCondition(&curr->state.localboard[row][col]);
+            evale -= tmpEv * evaluatorMul[currentPos];
+        }
+    }
+
+    for (int row = 0; row < 3; row++)
+    {
+        for (int col = 0; col < 3; col++)
+        {
+            mainBd->board[row][col] = curr->state.localboard[(col / 3) / 3][(col / 3) % 3].board[row][col]; // Copie des LocalGrids
+        }
+    }
+
+    // Utilisation des instances LocalGrid pour les calculs
+    evale -= checkWinCondition(mainBd) * 5000;
+    evale += realEvaluateSquare(mainBd) * 150;
+
+    curr->value = evale;
 }
 
 Move *NextMoves(GlobalGrid game)
@@ -74,8 +221,8 @@ GlobalGrid ApplyMove(GlobalGrid game, Pos pos)
 {
     int xg, yg;
     GlobalGrid next = game;
-    xg = (pos.y / 3) / 3;// Récupère la grille globale à mettre à jour
-    yg = (pos.y / 3) % 3;// Récupère la position de la localboard dans la grille globale
+    xg = (pos.y / 3) / 3; // Récupère la grille globale à mettre à jour
+    yg = (pos.y / 3) % 3; // Récupère la position de la localboard dans la grille globale
     int x = pos.x;
     int y = (pos.y % 3);
 
@@ -149,14 +296,14 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
 {
     if (depth == 0 || game_CheckIfWon(&node->state) || isGlobalGridFull(node->state))
     {
-        EvaluateMove(node);
+        evaluateGame(node);
         return node;
     }
     Move *moves = NextMoves(node->state);
 
     if (maximizingPlayer == node->state.current_player)
     {
-        int bestValue = INT_MIN;
+        // int bestValue = INT_MIN;
         Node *bestNode = NULL;
         for (int i = 0; i < moves->num_moves; i++)
         {
@@ -172,7 +319,7 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
     }
     else
     {
-        int bestValue = INT_MAX;
+        // int bestValue = INT_MAX;
         Node *bestNode = NULL;
         for (int i = 0; i < moves->num_moves; i++)
         {
