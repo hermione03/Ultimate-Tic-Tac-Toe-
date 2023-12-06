@@ -26,7 +26,7 @@ typedef struct Node Node;
 Node *createNode(GlobalGrid game);
 int giveValue(enum player p);
 int checkWinCondition(LocalGrid *lcState);
-int realEvaluateSquare(LocalGrid *lcState);
+int evaluateLG(LocalGrid *lcState);
 void EvaluateMove(Node *state);
 void evaluateGame(Node *curr);
 Move *NextMoves(GlobalGrid game);

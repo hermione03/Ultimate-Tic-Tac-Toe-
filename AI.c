@@ -48,7 +48,7 @@ int checkWinCondition(LocalGrid *lcState)
     }
 }
 
-int realEvaluateSquare(LocalGrid *lcState)
+int evaluateLG(LocalGrid *lcState)
 {
     int evaluation = 0;
     int poids[] = {0.2, 0.17, 0.2, 0.17, 0.22, 0.17, 0.2, 0.17, 0.2};
@@ -120,6 +120,7 @@ int realEvaluateSquare(LocalGrid *lcState)
     return evaluation;
 }
 
+// Fonction de test
 void EvaluateMove(Node *curr)
 {
     curr->value = 0;
@@ -137,10 +138,10 @@ void evaluateGame(Node *curr)
         for (int col = 0; col < 3; col++)
         {
             int currentPos = row * 3 + col;
-            evale += realEvaluateSquare(&curr->state.localboard[row][col]) * 1.5 * evaluatorMul[currentPos];
+            evale += evaluateLG(&curr->state.localboard[row][col]) * 1.5 * evaluatorMul[currentPos];
             if (currentPos == curr->state.relative_grid && curr->state.relative_grid != -1)
             {
-                evale += realEvaluateSquare(&curr->state.localboard[row][col]) * evaluatorMul[currentPos];
+                evale += evaluateLG(&curr->state.localboard[row][col]) * evaluatorMul[currentPos];
             }
             int tmpEv = checkWinCondition(&curr->state.localboard[row][col]);
             evale -= tmpEv * evaluatorMul[currentPos];
@@ -157,7 +158,7 @@ void evaluateGame(Node *curr)
 
     // Utilisation des instances LocalGrid pour les calculs
     evale -= checkWinCondition(mainBd) * 5000;
-    evale += realEvaluateSquare(mainBd) * 150;
+    evale += evaluateLG(mainBd) * 150;
     free(mainBd);
 
     curr->value = evale;
