@@ -19,7 +19,7 @@ int main()
         }
         else
         {
-            UTTT_GAME(&game, random_pick_move, minimax_pick_move);
+            UTTT_GAME(&game, random_pick_move, alphaBeta_pick_move);
         }
     }
 
