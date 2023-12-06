@@ -151,6 +151,53 @@ Pos minimax_pick_move(GlobalGrid *game)
     pos.y = -1;
     return pos;
 }
+Pos alphaBeta_pick_move(GlobalGrid *game)
+{
+    int i, x, y, xg, yg;
+    Pos pos;
+    Move *moves = NextMoves(*game);
+    printf("Mouvements disponibles :\n");
+    for (i = 0; moves->lst_moves[i] != NULL; i++)
+    {
+        printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+    }
+    printf("\n");
+
+    int depth = 5; // Set your desired depth for MiniMax
+
+    Node *root = createNode(*game);
+    Node *bestMove = AlphaBeta(root, depth, INT_MIN, INT_MAX, game->current_player);
+    printf("Best Move : %d\n", bestMove->value);
+
+    for (i = 0; moves->lst_moves[i] != NULL; i++)
+    {
+        x = moves->lst_moves[i]->x;
+        y = moves->lst_moves[i]->y;
+        xg = (y / 3) / 3;
+        yg = (y / 3) % 3;
+        // if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
+        if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
+        {
+            // printf("Le meilleur mouvement suggéré par MiniMax est : (%d,%d)\n", x, y);
+            pos.x = x;
+            pos.y = y;
+            return pos;
+        }
+    }
+    // Nettoyage de la mémoire allouée pour les mouvements
+    for (int i = 0; moves->lst_moves[i] != NULL; i++)
+    {
+        free(moves->lst_moves[i]);
+    }
+    free(moves->lst_moves);
+    free(moves);
+
+    // Dans le cas improbable où aucun mouvement valide n'a été trouvé, retourner une position nulle
+    displayTree(root);
+    pos.x = -1;
+    pos.y = -1;
+    return pos;
+}
 
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)())
 {

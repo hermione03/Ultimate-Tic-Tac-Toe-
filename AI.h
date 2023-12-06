@@ -36,5 +36,6 @@ void displayNode(Node *node);
 void displayTree(Node *node);
 void freeTree(Node *root);
 Node *MiniMax(Node *node, int depth, int maximizingPlayer);
+Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer);
 
 #endif /* AI_H */

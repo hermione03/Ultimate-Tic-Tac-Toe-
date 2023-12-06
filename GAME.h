@@ -34,6 +34,7 @@ int possibleMove(GlobalGrid *game, int x, int y);
 Pos random_pick_move(GlobalGrid *game);
 Pos human_pick_move(GlobalGrid *game);
 Pos minimax_pick_move(GlobalGrid *game);
+Pos alphaBeta_pick_move(GlobalGrid *game);
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)());
 
 #endif /* UTTT_H */

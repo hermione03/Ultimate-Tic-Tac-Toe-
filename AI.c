@@ -336,3 +336,54 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
         return bestNode;
     }
 }
+
+Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer)
+{
+    if (depth == 0 || game_CheckIfWon(&node->state) || isGlobalGridFull(node->state))
+    {
+        evaluateGame(node);
+        return node;
+    }
+    Move *moves = NextMoves(node->state);
+
+    if (maximizingPlayer == node->state.current_player)
+    {
+        Node *bestNode = NULL;
+        for (int i = 0; i < moves->num_moves; i++)
+        {
+            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
+            addSuccessor(node, child);
+            Node *result = AlphaBeta(child, depth - 1, alpha, beta, !maximizingPlayer);
+            if (bestNode == NULL || result->value > bestNode->value)
+            {
+                bestNode = result;
+            }
+            alpha = (alpha > result->value) ? alpha : result->value;
+            if (beta <= alpha)
+            {
+                break; // Élagage Beta
+            }
+        }
+        return bestNode;
+    }
+    else
+    {
+        Node *bestNode = NULL;
+        for (int i = 0; i < moves->num_moves; i++)
+        {
+            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
+            addSuccessor(node, child);
+            Node *result = AlphaBeta(child, depth - 1, alpha, beta, !maximizingPlayer);
+            if (bestNode == NULL || result->value < bestNode->value)
+            {
+                bestNode = result;
+            }
+            beta = (beta < result->value) ? beta : result->value;
+            if (beta <= alpha)
+            {
+                break; // Élagage Alpha
+            }
+        }
+        return bestNode;
+    }
+}
