@@ -3,9 +3,10 @@
 #define LOCAL_GRID_H
 
 // Structure pour représenter une grille locale
-typedef struct {
-    char board[3][3];
-    char winner;
+typedef struct
+{
+    char board[3][3]; // une matrice de char 3 * 3
+    char winner;      // le gagnant de cette grille locale
 } LocalGrid;
 
 // Initialise une grille locale
@@ -21,4 +22,3 @@ int LG_CheckIfWon(LocalGrid *grid);
 int isLocalGridFull(LocalGrid *grid);
 
 #endif /* LOCAL_GRID_H */
-
