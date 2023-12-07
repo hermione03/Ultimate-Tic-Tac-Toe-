@@ -41,7 +41,7 @@ int possibleMove(GlobalGrid *game, int x, int y)
         if (game->relative_grid != g && game->relative_grid > -1)
         {
             // printf("Vous n'avez pas le droit de jouer dans cette grille Locale !\n");
-            // printf("Vous devez jouer dans la grille numero : %d\n",game->relative_grid);
+            // printf("Vous devez jouer dans la grille numero : %d\n", game->relative_grid);
             return 0;
         }
         if (game->localboard[xg][yg].board[x][y % 3] == '-' && game->localboard[xg][yg].winner != ' ')
@@ -64,12 +64,13 @@ Pos random_pick_move(GlobalGrid *game)
 {
     Pos pos;
     Move *moves = NextMoves(*game);
-    // printf("Mouvements disponibles :\n");
-    //  for (int i = 0; moves->lst_moves[i] != NULL; i++)
-    //  {
-    //      printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-    //  }
-    //  printf("\n");
+    // printf("%c HEEEEERE ON RANDOM !!\n", game->current_player);
+    printf("Mouvements disponibles :\n");
+    for (int i = 0; moves->lst_moves[i] != NULL; i++)
+    {
+        printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+    }
+    printf("\n");
 
     // Générer un indice aléatoire dans la liste des mouvements disponibles
     int random_index = rand() % moves->num_moves;
@@ -85,6 +86,7 @@ Pos random_pick_move(GlobalGrid *game)
 
 Pos human_pick_move(GlobalGrid *game)
 {
+    // printf("%c HEEEEERE ON HUMAN !!\n", game->current_player);
     Pos pos;
     do
     {
@@ -107,7 +109,8 @@ Pos human_pick_move(GlobalGrid *game)
 Pos minimax_pick_move(GlobalGrid *game, int depth)
 {
     int i, x, y, xg, yg;
-    Pos pos;
+    Pos pos = {-1, -1};
+    // printf("%c HEEEEERE ON MINIMAX !!\n", game->current_player);
     Move *moves = NextMoves(*game);
     printf("Mouvements disponibles :\n");
     for (i = 0; moves->lst_moves[i] != NULL; i++)
@@ -115,47 +118,50 @@ Pos minimax_pick_move(GlobalGrid *game, int depth)
         printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
     }
     printf("\n");
-
     // int depth = 5; // Set your desired depth for MiniMax
-
-    Node *root = createNode(*game);
+    Node *root = createNode(*game, pos);
+    // displayTree(best);
     Node *bestMove = MiniMax(root, depth, game->current_player);
     printf("Best Move : %d\n", bestMove->value);
+    printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", bestMove->lastpos.x, bestMove->lastpos.y);
+    return bestMove->lastpos;
+    // for (i = 0; moves->lst_moves[i] != NULL; i++)
+    // {
+    //     x = moves->lst_moves[i]->x;
+    //     y = moves->lst_moves[i]->y;
+    //     xg = (y / 3) / 3;
+    //     yg = (y / 3) % 3;
+    //     // if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
+    //     if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
+    //     {
+    //         printf("Le meilleur mouvement suggéré par MiniMax est : (%d,%d)\n", x, y);
+    //         pos.x = x;
+    //         pos.y = y;
+    //         // printf("LAAAAAAAA POOOOOS : (%d,%d)\n", pos.x, pos.y);
+    //         return pos;
+    //     }
+    // }
+    // // Nettoyage de la mémoire allouée pour les mouvements
+    // for (int i = 0; moves->lst_moves[i] != NULL; i++)
+    // {
+    //     free(moves->lst_moves[i]);
+    // }
+    // free(moves->lst_moves);
+    // free(moves);
 
-    for (i = 0; moves->lst_moves[i] != NULL; i++)
-    {
-        x = moves->lst_moves[i]->x;
-        y = moves->lst_moves[i]->y;
-        xg = (y / 3) / 3;
-        yg = (y / 3) % 3;
-        // if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
-        if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
-        {
-            // printf("Le meilleur mouvement suggéré par MiniMax est : (%d,%d)\n", x, y);
-            pos.x = x;
-            pos.y = y;
-            return pos;
-        }
-    }
-    // Nettoyage de la mémoire allouée pour les mouvements
-    for (int i = 0; moves->lst_moves[i] != NULL; i++)
-    {
-        free(moves->lst_moves[i]);
-    }
-    free(moves->lst_moves);
-    free(moves);
+    // // Dans le cas improbable où aucun mouvement valide n'a été trouvé, retourner une position nulle
 
-    // Dans le cas improbable où aucun mouvement valide n'a été trouvé, retourner une position nulle
-    displayTree(root);
-    pos.x = -1;
-    pos.y = -1;
-    return pos;
+    // pos.x = -1;
+    // pos.y = -1;
+    // // printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", pos.x, pos.y);
+    // return pos;
 }
 Pos alphaBeta_pick_move(GlobalGrid *game, int depth)
 {
     int i, x, y, xg, yg;
-    Pos pos;
+    Pos pos = {-1, -1};
     Move *moves = NextMoves(*game);
+    // printf("%c HEEEEERE ON ALPHABETA !!\n", game->current_player);
     printf("Mouvements disponibles :\n");
     for (i = 0; moves->lst_moves[i] != NULL; i++)
     {
@@ -163,38 +169,43 @@ Pos alphaBeta_pick_move(GlobalGrid *game, int depth)
     }
     printf("\n");
 
-    Node *root = createNode(*game);
+    Node *root = createNode(*game, pos);
     Node *bestMove = AlphaBeta(root, depth, INT_MIN, INT_MAX, game->current_player);
     printf("Best Move : %d\n", bestMove->value);
+    printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", bestMove->lastpos.x, bestMove->lastpos.y);
+    return bestMove->lastpos;
 
-    for (i = 0; moves->lst_moves[i] != NULL; i++)
-    {
-        x = moves->lst_moves[i]->x;
-        y = moves->lst_moves[i]->y;
-        xg = (y / 3) / 3;
-        yg = (y / 3) % 3;
-        // if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
-        if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
-        {
-            // printf("Le meilleur mouvement suggéré par MiniMax est : (%d,%d)\n", x, y);
-            pos.x = x;
-            pos.y = y;
-            return pos;
-        }
-    }
-    // Nettoyage de la mémoire allouée pour les mouvements
-    for (int i = 0; moves->lst_moves[i] != NULL; i++)
-    {
-        free(moves->lst_moves[i]);
-    }
-    free(moves->lst_moves);
-    free(moves);
+    // for (i = 0; moves->lst_moves[i] != NULL; i++)
+    // {
+    //     x = moves->lst_moves[i]->x;
+    //     y = moves->lst_moves[i]->y;
+    //     xg = (y / 3) / 3;
+    //     yg = (y / 3) % 3;
+    //     // if (bestMove->state.localboard[xg][yg].board[x][y % 3] == bestMove->state.current_player)
+    //     printf("%c joueur courrent de bestmove\n", bestMove->state.current_player);
+    //     if (bestMove->state.localboard[xg][yg].board[x][y % 3] == game->current_player)
+    //     {
+    //         printf("Le meilleur mouvement suggéré par AlphaBeta est : (%d,%d)\n", x, y);
+    //         pos.x = x;
+    //         pos.y = y;
+    //         // printf("LAAAAAAAA POOOOOS : (%d,%d)\n", pos.x, pos.y);
+    //         return pos;
+    //     }
+    // }
+    // // Nettoyage de la mémoire allouée pour les mouvements
+    // for (int i = 0; moves->lst_moves[i] != NULL; i++)
+    // {
+    //     free(moves->lst_moves[i]);
+    // }
+    // free(moves->lst_moves);
+    // free(moves);
 
-    // Dans le cas improbable où aucun mouvement valide n'a été trouvé, retourner une position nulle
-    displayTree(root);
-    pos.x = -1;
-    pos.y = -1;
-    return pos;
+    // // Dans le cas improbable où aucun mouvement valide n'a été trouvé, retourner une position nulle
+    // // displayTree(root);
+    // pos.x = -1;
+    // pos.y = -1;
+    // printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", pos.x, pos.y);
+    // return pos;
 }
 
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth)
@@ -222,11 +233,11 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
     {
         if (player2_pick_move == minimax_pick_move || player2_pick_move == alphaBeta_pick_move)
         {
-            chosenMove = player1_pick_move(game, depth); // Obtenir le mouvement du joueur 2
+            chosenMove = player2_pick_move(game, depth); // Obtenir le mouvement du joueur 2
         }
         else
         {
-            chosenMove = player1_pick_move(game); // Obtenir le mouvement du joueur 2
+            chosenMove = player2_pick_move(game); // Obtenir le mouvement du joueur 2
         }
     }
 
@@ -235,17 +246,21 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
 
     int xg = (y / 3) / 3;
     int yg = (y / 3) % 3;
+    // printf("NARMOOOOL LE CHOIX ETAIIIIIIIIT (%d,%d)\n", x, y);
+    game->localboard[xg][yg].board[x][y % 3] = game->current_player;
+    LG_CheckIfWon(&game->localboard[x][y % 3]);
 
-    if (isLocalGridFull(&game->localboard[x][y % 3]) || LG_CheckIfWon(&game->localboard[x][y % 3]))
+    if (isLocalGridFull(&game->localboard[x][y % 3]) || game->localboard[x][y % 3].winner != ' ')
     {
-        printf("Grille etudiée : (%d,%d)\n", x, y % 3);
-        printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(&game->localboard[x][y % 3]), LG_CheckIfWon(&game->localboard[x][y % 3]));
+        // printf("Grille etudiée : (%d,%d)\n", x, y % 3);
+        // printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(&game->localboard[x][y % 3]), LG_CheckIfWon(&game->localboard[x][y % 3]));
         game->relative_grid = -1;
     }
     else
     {
-        // printf("***********Grille locale : %d %d\n", x, y % 3);
+        // printf("***********Grille locale testée  : %d %d\n", x, y % 3);
         // printf("***********Winner : %c\n", game->localboard[x][y % 3].winner);
+        // printf("ALORS PPK PAS : Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(&game->localboard[x][y % 3]), LG_CheckIfWon(&game->localboard[x][y % 3]));
         game->relative_grid = y % 3 + x * 3;
         // printf("relaaaaaative : %d\n", game->relative_grid);
     }
@@ -258,8 +273,6 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
     {
         printf("Grille relative = %d\n", game->relative_grid);
     }
-
-    game->localboard[xg][yg].board[x][y % 3] = game->current_player;
 
     if (LG_CheckIfWon(&game->localboard[xg][yg]))
     {
