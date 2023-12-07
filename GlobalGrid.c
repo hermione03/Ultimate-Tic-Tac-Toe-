@@ -17,7 +17,7 @@ GlobalGrid initialize_global_grid()
     }
     game.current_player = HUMAN;
     game.winner = ' ';
-    game.relative_grid = 2;
+    game.relative_grid = -1;
     // memset(game.localboard, '-', sizeof(game.localboard));
     return game;
 }
