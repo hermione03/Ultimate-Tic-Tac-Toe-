@@ -20,20 +20,21 @@ struct Node
     int num_successors;       // son nombre de successeurs
     int capacity;             // utilisée pour le vecteur
     struct Node **successors; // un vecteur de ses successeurs
+    Pos lastpos;
 };
 typedef struct Node Node;
 
 // Prototypes de fonctions
 
 // Crée un nouveau nœud dans l'arbre à partir de l'état du jeu
-Node *createNode(GlobalGrid game);
-// Donne une valeur spécifique à un joueur 
+Node *createNode(GlobalGrid game, Pos pos);
+// Donne une valeur spécifique à un joueur
 int giveValue(enum player p);
 // Vérifie si l'état actuel de la grille est une condition de victoire
 int checkWinCondition(LocalGrid *lcState);
 // Évalue l'état actuel d'une grille locale dans l'arbre du jeu
 int evaluateLG(LocalGrid *lcState);
-// Fonction de teste 
+// Fonction de teste
 void EvaluateMove(Node *state);
 // Trouve les prochains mouvements possibles pour un état de jeu donné
 Move *NextMoves(GlobalGrid game);

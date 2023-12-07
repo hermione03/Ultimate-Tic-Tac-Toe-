@@ -1,7 +1,7 @@
 
 #include "AI.h"
 
-Node *createNode(GlobalGrid game)
+Node *createNode(GlobalGrid game, Pos pos)
 {
     Node *newNode = (Node *)malloc(sizeof(Node));
     if (newNode)
@@ -11,6 +11,7 @@ Node *createNode(GlobalGrid game)
         newNode->num_successors = 0;
         newNode->capacity = 0;
         newNode->successors = NULL;
+        newNode->lastpos = pos;
     }
     return newNode;
 }
@@ -120,6 +121,46 @@ int evaluateLG(LocalGrid *lcState)
     return evaluation;
 }
 
+// int evaluateLG(LocalGrid *lcState) {
+//     int evaluation = 0;
+//     int poids[] = {0.2, 0.17, 0.2, 0.17, 0.22, 0.17, 0.2, 0.17, 0.2};
+
+//     // Calcul de l'évaluation basée sur les valeurs du tableau et des poids
+//     for (int i = 0; i < 3; i++) {
+//         for (int j = 0; j < 3; j++) {
+//             evaluation -= giveValue(lcState->board[i][j]) * poids[i * 3 + j];
+//         }
+//     }
+
+//     // Tableau de combinaisons pour les conditions de victoire
+//     int lines[8][3] = {
+//         {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // lignes
+//         {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, // colonnes
+//         {0, 4, 8}, {2, 4, 6}             // diagonales
+//     };
+
+//     // Vérification des conditions de victoire pour différentes valeurs
+//     int values[] = {2, -1, -2, 1};
+//     int points[] = {6, 9, -6, -9};
+
+//     for (int k = 0; k < 4; k++) {
+//         for (int i = 0; i < 8; i++) {
+//             int sum = 0;
+//             for (int j = 0; j < 3; j++) {
+//                 sum += giveValue(lcState->board[lines[i][j] / 3][lines[i][j] % 3]);
+//             }
+//             if (sum == values[k] * 3) {
+//                 evaluation += points[k];
+//             }
+//         }
+//     }
+
+//     // Réduction de l'évaluation si une condition de victoire est remplie
+//     evaluation -= checkWinCondition(lcState) * 12;
+
+//     return evaluation;
+// }
+
 // Fonction de test
 void EvaluateMove(Node *curr)
 {
@@ -222,9 +263,26 @@ GlobalGrid ApplyMove(GlobalGrid game, Pos pos)
     yg = (pos.y / 3) % 3; // Récupère la position de la localboard dans la grille globale
     int x = pos.x;
     int y = (pos.y % 3);
-
+    // printf("APPLYYYYYY LE CHOIX ETAIIIIIIIIT (%d,%d)\n", x, y);
     next.localboard[xg][yg].board[x][y] = game.current_player;
+    LG_CheckIfWon(&next.localboard[x][y % 3]);
 
+    if (isLocalGridFull(&next.localboard[x][y % 3]) || next.localboard[x][y % 3].winner != ' ')
+    {
+        // printf("Grille etudiée : (%d,%d)\n", x, y % 3);
+        // printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(next.localboard[x][y % 3]), LG_CheckIfWon(next.localboard[x][y % 3]));
+        next.relative_grid = -1;
+    }
+    else
+    {
+        // printf("***********Grille locale testée  : %d %d\n", x, y % 3);
+        // printf("***********Winner : %c\n", next.localboard[x][y % 3].winner);
+        // printf("ALORS PPK PAS : Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(next.localboard[x][y % 3]), LG_CheckIfWon(&next.localboard[x][y % 3]));
+        next.relative_grid = y % 3 + x * 3;
+        // printf("relaaaaaative : %d\n", next->relative_grid);
+    }
+    // Display_game(&next);
+    updatePlayer(&next);
     return next;
 }
 
@@ -232,7 +290,7 @@ void addSuccessor(Node *node, Node *successor)
 {
     if (node->num_successors >= node->capacity)
     {
-        node->capacity = (node->capacity == 0) ? 1 : node->capacity * 2;
+        node->capacity = (node->capacity == 0) ? 1 : node->capacity + 1;
         node->successors = realloc(node->successors, node->capacity * sizeof(Node *));
         if (node->successors == NULL)
         {
@@ -310,7 +368,9 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
         Node *bestNode = NULL;
         for (int i = 0; i < moves->num_moves; i++)
         {
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
+            // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            // displayNode(child);
             addSuccessor(node, child);
             Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
             if (bestNode == NULL || result->value > bestNode->value)
@@ -318,6 +378,7 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
                 bestNode = result;
             }
         }
+        // displayNode(bestNode);
         return bestNode;
     }
     else
@@ -326,7 +387,7 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
         Node *bestNode = NULL;
         for (int i = 0; i < moves->num_moves; i++)
         {
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
+            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
             addSuccessor(node, child);
             Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
             if (bestNode == NULL || result->value < bestNode->value)
@@ -334,6 +395,7 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
                 bestNode = result;
             }
         }
+        // displayNode(bestNode);
         return bestNode;
     }
 }
@@ -352,7 +414,8 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
         Node *bestNode = NULL;
         for (int i = 0; i < moves->num_moves; i++)
         {
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
+            // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
             addSuccessor(node, child);
             Node *result = AlphaBeta(child, depth - 1, alpha, beta, !maximizingPlayer);
             if (bestNode == NULL || result->value > bestNode->value)
@@ -365,6 +428,7 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
                 break; // Élagage Beta
             }
         }
+        // displayNode(bestNode);
         return bestNode;
     }
     else
@@ -372,7 +436,9 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
         Node *bestNode = NULL;
         for (int i = 0; i < moves->num_moves; i++)
         {
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]));
+            // printf("WAAAAAAAAAAAAAAAAAH ellllllllllssssssssseeeeeeeee: (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            // displayNode(child);
             addSuccessor(node, child);
             Node *result = AlphaBeta(child, depth - 1, alpha, beta, !maximizingPlayer);
             if (bestNode == NULL || result->value < bestNode->value)
@@ -385,6 +451,7 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
                 break; // Élagage Alpha
             }
         }
+        // displayNode(bestNode);
         return bestNode;
     }
 }
