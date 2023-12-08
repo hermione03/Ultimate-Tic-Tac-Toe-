@@ -3,7 +3,7 @@
 Pos random_pick_move(GlobalGrid *game)
 {
     Pos pos;
-    Move *moves = NextMoves(*game);
+    Move *moves = get_possible_moves(*game);
     // printf("%c HEEEEERE ON RANDOM !!\n", game->current_player);
     printf("Mouvements disponibles :\n");
     for (int i = 0; moves->lst_moves[i] != NULL; i++)
@@ -42,6 +42,6 @@ Pos human_pick_move(GlobalGrid *game)
             while (getchar() != '\n')
                 ;
         }
-    } while (!possibleMove(game, pos.x, pos.y));
+    } while (!is_move_possible(game, pos.x, pos.y));
     return pos;
 }

@@ -14,7 +14,7 @@ typedef struct
 GlobalGrid initialize_global_grid();
 GlobalGrid test_initialize_global_grid(); // fonction de test
 void Display_game(GlobalGrid *game);
-int isGlobalGridFull(GlobalGrid game);
-int game_CheckIfWon(GlobalGrid *game);
+int is_global_grid_full(GlobalGrid game);
+int is_game_won(GlobalGrid *game);
 
 #endif /* GLOBAL_GRID_H */

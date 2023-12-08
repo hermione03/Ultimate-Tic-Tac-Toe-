@@ -115,14 +115,14 @@ void Display_game(GlobalGrid *game)
     printf("\n");
 }
 
-int isGlobalGridFull(GlobalGrid game)
+int is_global_grid_full(GlobalGrid game)
 {
-    // printf("isGlobalGridFull\n");
+    // printf("is_global_grid_full\n");
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
         {
-            if (game.localboard[i][j].winner == ' ' && !isLocalGridFull(&game.localboard[i][j]))
+            if (game.localboard[i][j].winner == ' ' && !is_local_grid_full(&game.localboard[i][j]))
             {
                 return 0; // Il y a une grille locale non pleine, donc la grille globale n'est pas pleine
             }
@@ -131,9 +131,9 @@ int isGlobalGridFull(GlobalGrid game)
     return 1; // Toutes les grilles locales sont pleines, la grille globale est pleine
 }
 
-int game_CheckIfWon(GlobalGrid *game)
+int is_game_won(GlobalGrid *game)
 {
-    // printf("game_CheckIfWon\n");
+    // printf("is_game_won\n");
     int i;
 
     // Vérification des lignes de grilles globales
@@ -144,7 +144,7 @@ int game_CheckIfWon(GlobalGrid *game)
             game->localboard[i][0].winner != ' ')
         {
             game->winner = game->localboard[i][0].winner;
-            printf(" %s a gagné(e) !\n", playerToString(game->winner));
+            printf(" %s a gagné(e) !\n", get_player_name(game->winner));
             return 1;
         }
     }
@@ -157,7 +157,7 @@ int game_CheckIfWon(GlobalGrid *game)
             game->localboard[0][i].winner != ' ')
         {
             game->winner = game->localboard[0][i].winner;
-            printf(" %s a gagné(e) !\n", playerToString(game->winner));
+            printf(" %s a gagné(e) !\n", get_player_name(game->winner));
             return 1;
         }
     }
@@ -168,7 +168,7 @@ int game_CheckIfWon(GlobalGrid *game)
         game->localboard[0][0].winner != ' ')
     {
         game->winner = game->localboard[0][0].winner;
-        printf(" %s a gagné(e) !\n", playerToString(game->winner));
+        printf(" %s a gagné(e) !\n", get_player_name(game->winner));
         return 1;
     }
 
@@ -177,7 +177,7 @@ int game_CheckIfWon(GlobalGrid *game)
         game->localboard[0][2].winner != ' ')
     {
         game->winner = game->localboard[0][2].winner;
-        printf(" %s a gagné(e) !\n", playerToString(game->winner));
+        printf(" %s a gagné(e) !\n", get_player_name(game->winner));
         return 1;
     }
 

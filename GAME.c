@@ -3,7 +3,7 @@
 #include "game.h"
 #include "ai.h"
 
-char *playerToString(enum player p)
+char *get_player_name(enum player p)
 {
     switch (p)
     {
@@ -16,12 +16,12 @@ char *playerToString(enum player p)
     }
 }
 
-void updatePlayer(GlobalGrid *game)
+void update_player(GlobalGrid *game)
 {
     game->current_player ^= COMPUTER ^ HUMAN;
 }
 
-int possibleMove(GlobalGrid *game, int x, int y)
+int is_move_possible(GlobalGrid *game, int x, int y)
 {
     int xg, yg, g;
 
@@ -63,9 +63,9 @@ int possibleMove(GlobalGrid *game, int x, int y)
 
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth)
 {
-    Move *moves = NextMoves(*game);
+    Move *moves = get_possible_moves(*game);
 
-    printf("Tour de %s de placer un %c \n", playerToString(game->current_player), game->current_player);
+    printf("Tour de %s de placer un %c \n", get_player_name(game->current_player), game->current_player);
     Display_game(game);
 
     int x, y;
@@ -101,19 +101,19 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
     int yg = (y / 3) % 3;
     // printf("NARMOOOOL LE CHOIX ETAIIIIIIIIT (%d,%d)\n", x, y);
     game->localboard[xg][yg].board[x][y % 3] = game->current_player;
-    LG_CheckIfWon(&game->localboard[x][y % 3]);
+    is_LG_won(&game->localboard[x][y % 3]);
 
-    if (isLocalGridFull(&game->localboard[x][y % 3]) || game->localboard[x][y % 3].winner != ' ')
+    if (is_local_grid_full(&game->localboard[x][y % 3]) || game->localboard[x][y % 3].winner != ' ')
     {
         // printf("Grille etudiée : (%d,%d)\n", x, y % 3);
-        // printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(&game->localboard[x][y % 3]), LG_CheckIfWon(&game->localboard[x][y % 3]));
+        // printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", is_local_grid_full(&game->localboard[x][y % 3]), is_LG_won(&game->localboard[x][y % 3]));
         game->relative_grid = -1;
     }
     else
     {
         // printf("***********Grille locale testée  : %d %d\n", x, y % 3);
         // printf("***********Winner : %c\n", game->localboard[x][y % 3].winner);
-        // printf("ALORS PPK PAS : Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(&game->localboard[x][y % 3]), LG_CheckIfWon(&game->localboard[x][y % 3]));
+        // printf("ALORS PPK PAS : Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", is_local_grid_full(&game->localboard[x][y % 3]), is_LG_won(&game->localboard[x][y % 3]));
         game->relative_grid = y % 3 + x * 3;
         // printf("relaaaaaative : %d\n", game->relative_grid);
     }
@@ -127,12 +127,12 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
         printf("Grille relative = %d\n", game->relative_grid);
     }
 
-    if (LG_CheckIfWon(&game->localboard[xg][yg]))
+    if (is_LG_won(&game->localboard[xg][yg]))
     {
-        printf("Grille locale gagnée par : %s\n", playerToString(game->current_player));
+        printf("Grille locale gagnée par : %s\n", get_player_name(game->current_player));
     }
 
-    updatePlayer(game);
+    update_player(game);
 
     // Nettoyage de la mémoire allouée pour les mouvements
     for (int i = 0; moves->lst_moves[i] != NULL; i++)

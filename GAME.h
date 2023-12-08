@@ -28,9 +28,9 @@ typedef struct
 } Move;
 
 // Prototypes de fonctions pour la manipulation des joueurs et des mouvements
-char *playerToString(enum player p);
-void updatePlayer(GlobalGrid *game);
-int possibleMove(GlobalGrid *game, int x, int y);
+char *get_player_name(enum player p);
+void update_player(GlobalGrid *game);
+int is_move_possible(GlobalGrid *game, int x, int y);
 Pos human_pick_move(GlobalGrid *game); // pour qu'un humain puisse jouer
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth);
 

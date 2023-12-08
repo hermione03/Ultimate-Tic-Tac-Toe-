@@ -16,9 +16,9 @@ void initialize_local_grid(LocalGrid *grid);
 void display_local_grid(LocalGrid *grid);
 
 // Vérifie s'il y a un gagnant dans une grille locale
-int LG_CheckIfWon(LocalGrid *grid);
+int is_LG_won(LocalGrid *grid);
 
 // Vérifie si une grille locale est pleine
-int isLocalGridFull(LocalGrid *grid);
+int is_local_grid_full(LocalGrid *grid);
 
 #endif /* LOCAL_GRID_H */

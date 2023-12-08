@@ -6,12 +6,12 @@ void evaluateGame(Node *curr);
 
 Node *MiniMax(Node *node, int depth, int maximizingPlayer)
 {
-    if (depth == 0 || game_CheckIfWon(&node->state) || isGlobalGridFull(node->state))
+    if (depth == 0 || is_game_won(&node->state) || is_global_grid_full(node->state))
     {
         evaluateGame(node);
         return node;
     }
-    Move *moves = NextMoves(node->state);
+    Move *moves = get_possible_moves(node->state);
 
     if (maximizingPlayer == node->state.current_player)
     {
@@ -20,16 +20,16 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
         for (int i = 0; i < moves->num_moves; i++)
         {
             // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
-            // displayNode(child);
-            addSuccessor(node, child);
+            Node *child = create_node(apply_move(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            // display_node(child);
+            add_successor(node, child);
             Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
             if (bestNode == NULL || result->value > bestNode->value)
             {
                 bestNode = result;
             }
         }
-        // displayNode(bestNode);
+        // display_node(bestNode);
         return bestNode;
     }
     else
@@ -38,15 +38,15 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
         Node *bestNode = NULL;
         for (int i = 0; i < moves->num_moves; i++)
         {
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
-            addSuccessor(node, child);
+            Node *child = create_node(apply_move(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            add_successor(node, child);
             Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
             if (bestNode == NULL || result->value < bestNode->value)
             {
                 bestNode = result;
             }
         }
-        // displayNode(bestNode);
+        // display_node(bestNode);
         return bestNode;
     }
 }
@@ -56,7 +56,7 @@ Pos minimax_pick_move(GlobalGrid *game, int depth)
     int i, x, y, xg, yg;
     Pos pos = {-1, -1};
     // printf("%c HEEEEERE ON MINIMAX !!\n", game->current_player);
-    Move *moves = NextMoves(*game);
+    Move *moves = get_possible_moves(*game);
     printf("Mouvements disponibles :\n");
     for (i = 0; moves->lst_moves[i] != NULL; i++)
     {
@@ -64,8 +64,8 @@ Pos minimax_pick_move(GlobalGrid *game, int depth)
     }
     printf("\n");
     // int depth = 5; // Set your desired depth for MiniMax
-    Node *root = createNode(*game, pos);
-    // displayTree(best);
+    Node *root = create_node(*game, pos);
+    // display_tree(best);
     Node *bestMove = MiniMax(root, depth, game->current_player);
     printf("Best Move : %d\n", bestMove->value);
     printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", bestMove->lastpos.x, bestMove->lastpos.y);
@@ -89,7 +89,7 @@ void evaluateGame(Node *curr)
             {
                 evale += evaluateLG(&curr->state.localboard[row][col]) * evaluatorMul[currentPos];
             }
-            int tmpEv = checkWinCondition(&curr->state.localboard[row][col]);
+            int tmpEv = check_win_condition(&curr->state.localboard[row][col]);
             evale -= tmpEv * evaluatorMul[currentPos];
         }
     }
@@ -103,7 +103,7 @@ void evaluateGame(Node *curr)
     }
 
     // Utilisation des instances LocalGrid pour les calculs
-    evale -= checkWinCondition(mainBd) * 5000;
+    evale -= check_win_condition(mainBd) * 5000;
     evale += evaluateLG(mainBd) * 150;
     free(mainBd);
 

@@ -26,7 +26,7 @@ void display_local_grid(LocalGrid *grid)
     printf("******************************");
 }
 
-int LG_CheckIfWon(LocalGrid *grid)
+int is_LG_won(LocalGrid *grid)
 {
     int i;
 
@@ -84,7 +84,7 @@ int LG_CheckIfWon(LocalGrid *grid)
     return 0;
 }
 
-int isLocalGridFull(LocalGrid *grid)
+int is_local_grid_full(LocalGrid *grid)
 {
     for (int i = 0; i < 3; i++)
     {

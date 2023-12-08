@@ -16,7 +16,7 @@ int main()
     // while (1)
     // {
 
-    //     if (game_CheckIfWon(&game) || isGlobalGridFull(game))
+    //     if (is_game_won(&game) || is_global_grid_full(game))
     //     {
     //         Display_game(&game);
     //         break;

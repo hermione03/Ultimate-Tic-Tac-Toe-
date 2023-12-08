@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "ai.h"
 
-Node *createNode(GlobalGrid game, Pos pos)
+Node *create_node(GlobalGrid game, Pos pos)
 {
     Node *newNode = (Node *)malloc(sizeof(Node));
     if (newNode)
@@ -32,9 +32,9 @@ int giveValue(enum player p)
     }
 }
 
-int checkWinCondition(LocalGrid *lcState)
+int check_win_condition(LocalGrid *lcState)
 {
-    LG_CheckIfWon(lcState);
+    is_LG_won(lcState);
     if (lcState->winner == COMPUTER)
     {
         return -1;
@@ -116,7 +116,7 @@ int evaluateLG(LocalGrid *lcState)
         evaluation += 9;
     }
 
-    evaluation -= checkWinCondition(lcState) * 12;
+    evaluation -= check_win_condition(lcState) * 12;
 
     return evaluation;
 }
@@ -156,7 +156,7 @@ int evaluateLG(LocalGrid *lcState)
 //     }
 
 //     // Réduction de l'évaluation si une condition de victoire est remplie
-//     evaluation -= checkWinCondition(lcState) * 12;
+//     evaluation -= check_win_condition(lcState) * 12;
 
 //     return evaluation;
 // }
@@ -184,7 +184,7 @@ void evaluateGame(Node *curr)
             {
                 evale += evaluateLG(&curr->state.localboard[row][col]) * evaluatorMul[currentPos];
             }
-            int tmpEv = checkWinCondition(&curr->state.localboard[row][col]);
+            int tmpEv = check_win_condition(&curr->state.localboard[row][col]);
             evale -= tmpEv * evaluatorMul[currentPos];
         }
     }
@@ -198,14 +198,14 @@ void evaluateGame(Node *curr)
     }
 
     // Utilisation des instances LocalGrid pour les calculs
-    evale -= checkWinCondition(mainBd) * 5000;
+    evale -= check_win_condition(mainBd) * 5000;
     evale += evaluateLG(mainBd) * 150;
     free(mainBd);
 
     curr->value = evale;
 }
 
-Move *NextMoves(GlobalGrid game)
+Move *get_possible_moves(GlobalGrid game)
 {
     int x, y, i = 0;
     int capacity = 1;
@@ -222,7 +222,7 @@ Move *NextMoves(GlobalGrid game)
     {
         for (y = 0; y < 27; y++)
         {
-            if (possibleMove(&game, x, y))
+            if (is_move_possible(&game, x, y))
             {
                 if (i >= capacity - 1)
                 {
@@ -255,7 +255,7 @@ Move *NextMoves(GlobalGrid game)
     return moves;
 }
 
-GlobalGrid ApplyMove(GlobalGrid game, Pos pos)
+GlobalGrid apply_move(GlobalGrid game, Pos pos)
 {
     int xg, yg;
     GlobalGrid next = game;
@@ -265,28 +265,28 @@ GlobalGrid ApplyMove(GlobalGrid game, Pos pos)
     int y = (pos.y % 3);
     // printf("APPLYYYYYY LE CHOIX ETAIIIIIIIIT (%d,%d)\n", x, y);
     next.localboard[xg][yg].board[x][y] = game.current_player;
-    LG_CheckIfWon(&next.localboard[x][y % 3]);
+    is_LG_won(&next.localboard[x][y % 3]);
 
-    if (isLocalGridFull(&next.localboard[x][y % 3]) || next.localboard[x][y % 3].winner != ' ')
+    if (is_local_grid_full(&next.localboard[x][y % 3]) || next.localboard[x][y % 3].winner != ' ')
     {
         // printf("Grille etudiée : (%d,%d)\n", x, y % 3);
-        // printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(next.localboard[x][y % 3]), LG_CheckIfWon(next.localboard[x][y % 3]));
+        // printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", is_local_grid_full(next.localboard[x][y % 3]), is_LG_won(next.localboard[x][y % 3]));
         next.relative_grid = -1;
     }
     else
     {
         // printf("***********Grille locale testée  : %d %d\n", x, y % 3);
         // printf("***********Winner : %c\n", next.localboard[x][y % 3].winner);
-        // printf("ALORS PPK PAS : Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", isLocalGridFull(next.localboard[x][y % 3]), LG_CheckIfWon(&next.localboard[x][y % 3]));
+        // printf("ALORS PPK PAS : Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", is_local_grid_full(next.localboard[x][y % 3]), is_LG_won(&next.localboard[x][y % 3]));
         next.relative_grid = y % 3 + x * 3;
         // printf("relaaaaaative : %d\n", next->relative_grid);
     }
     // Display_game(&next);
-    updatePlayer(&next);
+    update_player(&next);
     return next;
 }
 
-void addSuccessor(Node *node, Node *successor)
+void add_successor(Node *node, Node *successor)
 {
     if (node->num_successors >= node->capacity)
     {
@@ -301,7 +301,7 @@ void addSuccessor(Node *node, Node *successor)
     node->successors[node->num_successors++] = successor;
 }
 
-void displayNode(Node *node)
+void display_node(Node *node)
 {
     printf("--------------- Node ------------------------\n");
     printf("Winner ? %c\n ", node->state.winner);
@@ -320,7 +320,7 @@ void displayNode(Node *node)
     printf("-------------------------------------------------------\n");
 }
 
-void displayTree(Node *node)
+void display_tree(Node *node)
 {
     printf("--------------- Tree ------------------------\n");
     if (node == NULL)
@@ -328,11 +328,11 @@ void displayTree(Node *node)
         return;
     }
 
-    displayNode(node);
+    display_node(node);
 
     for (int i = 0; i < node->num_successors; i++)
     {
-        displayTree(node->successors[i]);
+        display_tree(node->successors[i]);
     }
     printf("-------------------------------------------------------\n");
 }

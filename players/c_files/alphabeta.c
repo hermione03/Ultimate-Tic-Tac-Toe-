@@ -7,12 +7,12 @@ void evaluateGame(Node *curr);
 
 Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer)
 {
-    if (depth == 0 || game_CheckIfWon(&node->state) || isGlobalGridFull(node->state))
+    if (depth == 0 || is_game_won(&node->state) || is_global_grid_full(node->state))
     {
         evaluateGame(node);
         return node;
     }
-    Move *moves = NextMoves(node->state);
+    Move *moves = get_possible_moves(node->state);
 
     if (maximizingPlayer == node->state.current_player)
     {
@@ -20,8 +20,8 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
         for (int i = 0; i < moves->num_moves; i++)
         {
             // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
-            addSuccessor(node, child);
+            Node *child = create_node(apply_move(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            add_successor(node, child);
             Node *result = AlphaBeta(child, depth - 1, alpha, beta, !maximizingPlayer);
             if (bestNode == NULL || result->value > bestNode->value)
             {
@@ -33,7 +33,7 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
                 break; // Élagage Beta
             }
         }
-        // displayNode(bestNode);
+        // display_node(bestNode);
         return bestNode;
     }
     else
@@ -42,9 +42,9 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
         for (int i = 0; i < moves->num_moves; i++)
         {
             // printf("WAAAAAAAAAAAAAAAAAH ellllllllllssssssssseeeeeeeee: (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
-            // displayNode(child);
-            addSuccessor(node, child);
+            Node *child = create_node(apply_move(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            // display_node(child);
+            add_successor(node, child);
             Node *result = AlphaBeta(child, depth - 1, alpha, beta, !maximizingPlayer);
             if (bestNode == NULL || result->value < bestNode->value)
             {
@@ -56,7 +56,7 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
                 break; // Élagage Alpha
             }
         }
-        // displayNode(bestNode);
+        // display_node(bestNode);
         return bestNode;
     }
 }
@@ -65,7 +65,7 @@ Pos alphaBeta_pick_move(GlobalGrid *game, int depth)
 {
     int i, x, y, xg, yg;
     Pos pos = {-1, -1};
-    Move *moves = NextMoves(*game);
+    Move *moves = get_possible_moves(*game);
     // printf("%c HEEEEERE ON ALPHABETA !!\n", game->current_player);
     printf("Mouvements disponibles :\n");
     for (i = 0; moves->lst_moves[i] != NULL; i++)
@@ -74,7 +74,7 @@ Pos alphaBeta_pick_move(GlobalGrid *game, int depth)
     }
     printf("\n");
 
-    Node *root = createNode(*game, pos);
+    Node *root = create_node(*game, pos);
     Node *bestMove = AlphaBeta(root, depth, INT_MIN, INT_MAX, game->current_player);
     printf("Best Move : %d\n", bestMove->value);
     printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", bestMove->lastpos.x, bestMove->lastpos.y);
@@ -98,7 +98,7 @@ void evaluateGame(Node *curr)
             {
                 evale += evaluateLG(&curr->state.localboard[row][col]) * evaluatorMul[currentPos];
             }
-            int tmpEv = checkWinCondition(&curr->state.localboard[row][col]);
+            int tmpEv = check_win_condition(&curr->state.localboard[row][col]);
             evale -= tmpEv * evaluatorMul[currentPos];
         }
     }
@@ -112,7 +112,7 @@ void evaluateGame(Node *curr)
     }
 
     // Utilisation des instances LocalGrid pour les calculs
-    evale -= checkWinCondition(mainBd) * 5000;
+    evale -= check_win_condition(mainBd) * 5000;
     evale += evaluateLG(mainBd) * 150;
     free(mainBd);
 
