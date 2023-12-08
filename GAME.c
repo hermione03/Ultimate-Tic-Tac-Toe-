@@ -31,33 +31,33 @@ int is_move_possible(GlobalGrid *game, int x, int y)
         printf("Position invalide : en dehors de la grille globale !\n");
         return 0;
     }
-    else
+
+    xg = (y / 3) / 3;
+    yg = (y / 3) % 3;
+    g = yg + xg * 3;
+
+    // printf("grille actuelle  = %d\n", g);
+    // printf("grille relative : %d\n", game->relative_grid);
+    // printf("AHHHHHHHHHHHH %c, %d, %d\n", game->localboard[xg][yg].board[x][y % 3], x, y);
+    if (game->relative_grid != g && game->relative_grid > -1)
     {
-        xg = (y / 3) / 3;
-        yg = (y / 3) % 3;
-        g = yg + xg * 3;
-        // printf("grille actuelle  = %d\n", g);
-        // printf("grille relative : %d\n", game->relative_grid);
-        // printf("AHHHHHHHHHHHH %c, %d, %d\n", game->localboard[xg][yg].board[x][y % 3], x, y);
-        if (game->relative_grid != g && game->relative_grid > -1)
-        {
-            // printf("Vous n'avez pas le droit de jouer dans cette grille Locale !\n");
-            // printf("Vous devez jouer dans la grille numero : %d\n", game->relative_grid);
-            return 0;
-        }
-        if (game->localboard[xg][yg].board[x][y % 3] == '-' && game->localboard[xg][yg].winner != ' ')
-        {
-            // printf("Cette grille locale est déjà gagnée !\n");
-            return 0;
-        }
-        // printf("grille plaine ou deja gagnée");
-        // return 0;
-        if (game->localboard[xg][yg].board[x][y % 3] != '-')
-        {
-            // printf("Cette case est deja prise !\n");
-            return 0;
-        }
+        // printf("Vous n'avez pas le droit de jouer dans cette grille Locale !\n");
+        // printf("Vous devez jouer dans la grille numero : %d\n",game->relative_grid);
+        return 0;
     }
+    if (game->localboard[xg][yg].winner != ' ')
+    {
+        // printf("Cette grille locale est déjà gagnée !\n");
+        return 0;
+    }
+    // printf("grille plaine ou deja gagnée");
+    // return 0;
+    if (game->localboard[xg][yg].board[x][y % 3] != '-')
+    {
+        // printf("Cette case est deja prise !\n");
+        return 0;
+    }
+
     return 1;
 }
 
