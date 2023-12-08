@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "ai.h"
+#include "../tree.h"
 
 Pos alphaBeta_pick_move(GlobalGrid *game);
 Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer);
