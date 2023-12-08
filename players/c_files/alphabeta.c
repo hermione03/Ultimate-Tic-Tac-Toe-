@@ -1,4 +1,7 @@
-#include "alphabeta.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include "../HEADERS/alphabeta.h"
 
 void evaluateGame(Node *curr);
 

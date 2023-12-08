@@ -3,8 +3,7 @@
 #define UTTT_H
 
 // Inclusions de bibliothèques
-#include <stdio.h>
-#include <time.h>
+
 #include "local_grid.h"
 #include "global_grid.h"
 

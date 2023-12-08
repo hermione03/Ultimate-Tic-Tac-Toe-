@@ -1,5 +1,5 @@
-#include "random.h"
-
+#include <stdlib.h>
+#include "../HEADERS/random.h"
 Pos random_pick_move(GlobalGrid *game)
 {
     Pos pos;

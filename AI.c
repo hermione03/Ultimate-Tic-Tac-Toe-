@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "ai.h"
 
 Node *createNode(GlobalGrid game, Pos pos)

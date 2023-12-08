@@ -1,8 +1,10 @@
-#include "local_grid.h"
-#include "global_grid.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "game.h"
-#include "ai.h"
-
+#include "players/HEADERS/alphabeta.h"
+#include "players/HEADERS/minimax.h"
+#include "players/HEADERS/random.h"
 int main()
 {
     int i = 2;

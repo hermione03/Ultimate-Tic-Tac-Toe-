@@ -1,5 +1,7 @@
-#include "minimax.h"
-
+#include <stdio.h>
+#include <stdlib.h>
+#include "../HEADERS/minimax.h"
+#include "../../ai.h"
 void evaluateGame(Node *curr);
 
 Node *MiniMax(Node *node, int depth, int maximizingPlayer)

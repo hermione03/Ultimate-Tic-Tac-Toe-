@@ -1,12 +1,6 @@
 #ifndef AI_H
 #define AI_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include "local_grid.h"
-#include "global_grid.h"
 #include "game.h"
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
