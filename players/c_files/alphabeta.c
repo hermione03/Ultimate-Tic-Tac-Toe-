@@ -7,12 +7,12 @@ void evaluateGame(Node *curr);
 
 Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer)
 {
-    if (depth == 0 || is_game_won(&node->state) || is_global_grid_full(node->state))
+    if (depth == 0 || is_game_over(node->state))
     {
         evaluateGame(node);
         return node;
     }
-    Poslist *moves = get_possible_moves(node->state);
+    PosList *moves = get_possible_moves(node->state);
 
     if (maximizingPlayer == node->state.current_player)
     {
@@ -65,7 +65,7 @@ Pos alphaBeta_pick_move(GlobalGrid *game, int depth)
 {
     int i, x, y, xg, yg;
     Pos pos = {-1, -1};
-    Poslist *moves = get_possible_moves(*game);
+    PosList *moves = get_possible_moves(*game);
     // printf("%c HEEEEERE ON ALPHABETA !!\n", game->current_player);
     printf("Mouvements disponibles :\n");
     for (i = 0; moves->positions[i] != NULL; i++)
@@ -76,7 +76,7 @@ Pos alphaBeta_pick_move(GlobalGrid *game, int depth)
 
     Node *root = create_node(*game, pos);
     Node *bestMove = AlphaBeta(root, depth, INT_MIN, INT_MAX, game->current_player);
-    printf("Best Poslist : %d\n", bestMove->value);
+    printf("Best PosList : %d\n", bestMove->value);
     printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", bestMove->lastpos.x, bestMove->lastpos.y);
     return bestMove->lastpos;
 }

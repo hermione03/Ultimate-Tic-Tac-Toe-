@@ -6,12 +6,12 @@ void evaluateGame(Node *curr);
 
 Node *MiniMax(Node *node, int depth, int maximizingPlayer)
 {
-    if (depth == 0 || is_game_won(&node->state) || is_global_grid_full(node->state))
+    if (depth == 0 || is_game_over(node->state))
     {
         evaluateGame(node);
         return node;
     }
-    Poslist *moves = get_possible_moves(node->state);
+    PosList *moves = get_possible_moves(node->state);
 
     if (maximizingPlayer == node->state.current_player)
     {
@@ -56,7 +56,7 @@ Pos minimax_pick_move(GlobalGrid *game, int depth)
     int i, x, y, xg, yg;
     Pos pos = {-1, -1};
     // printf("%c HEEEEERE ON MINIMAX !!\n", game->current_player);
-    Poslist *moves = get_possible_moves(*game);
+    PosList *moves = get_possible_moves(*game);
     printf("Mouvements disponibles :\n");
     for (i = 0; moves->positions[i] != NULL; i++)
     {
@@ -67,7 +67,7 @@ Pos minimax_pick_move(GlobalGrid *game, int depth)
     Node *root = create_node(*game, pos);
     // display_tree(best);
     Node *bestMove = MiniMax(root, depth, game->current_player);
-    printf("Best Poslist : %d\n", bestMove->value);
+    printf("Best PosList : %d\n", bestMove->value);
     printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", bestMove->lastpos.x, bestMove->lastpos.y);
     return bestMove->lastpos;
 }

@@ -241,3 +241,8 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
 
     return 1;
 }
+
+int is_game_over(GlobalGrid *game)
+{
+    return is_game_won(game) || is_global_grid_full(*game);
+}
