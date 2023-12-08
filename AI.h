@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include "LocalGrid.h"
-#include "GlobalGrid.h"
-#include "GAME.h"
+#include "local_grid.h"
+#include "global_grid.h"
+#include "game.h"
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))

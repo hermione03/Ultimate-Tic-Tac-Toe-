@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "LocalGrid.h"
+#include "local_grid.h"
 
 void initialize_local_grid(LocalGrid *grid)
 {
@@ -99,7 +99,3 @@ int isLocalGridFull(LocalGrid *grid)
 
     return 1; // Aucune case vide, la grille est pleine
 }
-
-
-
-

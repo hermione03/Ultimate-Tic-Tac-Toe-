@@ -1,7 +1,7 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
-#include "GAME.h"
+#include "game.h"
 
 Pos random_pick_move(GlobalGrid *game);
 

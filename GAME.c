@@ -1,6 +1,6 @@
 
-#include "GAME.h"
-#include "AI.h"
+#include "game.h"
+#include "ai.h"
 
 char *playerToString(enum player p)
 {

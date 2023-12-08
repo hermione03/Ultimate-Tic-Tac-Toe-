@@ -1,7 +1,7 @@
-#include "LocalGrid.h"
-#include "GlobalGrid.h"
-#include "GAME.h"
-#include "AI.h"
+#include "local_grid.h"
+#include "global_grid.h"
+#include "game.h"
+#include "ai.h"
 
 int main()
 {

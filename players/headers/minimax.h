@@ -1,8 +1,8 @@
 #ifndef MINIMAX_H
 #define MINIMAX_H
 
-#include "GAME.h"
-#include "AI.h"
+#include "game.h"
+#include "ai.h"
 
 Node *MiniMax(Node *node, int depth, int maximizingPlayer);
 Pos minimax_pick_move(GlobalGrid *game);

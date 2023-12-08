@@ -1,5 +1,5 @@
 
-#include "AI.h"
+#include "ai.h"
 
 Node *createNode(GlobalGrid game, Pos pos)
 {

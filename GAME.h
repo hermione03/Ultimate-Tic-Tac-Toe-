@@ -5,8 +5,8 @@
 // Inclusions de bibliothèques
 #include <stdio.h>
 #include <time.h>
-#include "LocalGrid.h"
-#include "GlobalGrid.h"
+#include "local_grid.h"
+#include "global_grid.h"
 
 // Enumération pour les joueurs
 enum player
