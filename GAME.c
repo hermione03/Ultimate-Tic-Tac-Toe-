@@ -108,14 +108,14 @@ GlobalGrid apply_move(GlobalGrid game, Pos pos)
     return next;
 }
 
-Move *get_possible_moves(GlobalGrid game)
+Poslist *get_possible_moves(GlobalGrid game)
 {
     int x, y, i = 0;
     int capacity = 1;
-    Move *moves = (Move *)malloc(sizeof(Move));
-    moves->lst_moves = (Pos **)malloc(capacity * sizeof(Pos *));
+    Poslist *moves = (Poslist *)malloc(sizeof(Poslist));
+    moves->positions = (Pos **)malloc(capacity * sizeof(Pos *));
 
-    if (moves == NULL || moves->lst_moves == NULL)
+    if (moves == NULL || moves->positions == NULL)
     {
         printf("Memory allocation failed for moves.\n");
         return NULL;
@@ -130,37 +130,37 @@ Move *get_possible_moves(GlobalGrid game)
                 if (i >= capacity - 1)
                 {
                     capacity += 1;
-                    moves->lst_moves = (Pos **)realloc(moves->lst_moves, capacity * sizeof(Pos *));
-                    if (moves->lst_moves == NULL)
+                    moves->positions = (Pos **)realloc(moves->positions, capacity * sizeof(Pos *));
+                    if (moves->positions == NULL)
                     {
-                        printf("Memory reallocation failed for moves->lst_moves.\n");
+                        printf("Memory reallocation failed for moves->positions.\n");
                         return NULL;
                     }
                 }
 
-                moves->lst_moves[i] = (Pos *)malloc(sizeof(Pos));
-                if (moves->lst_moves[i] == NULL)
+                moves->positions[i] = (Pos *)malloc(sizeof(Pos));
+                if (moves->positions[i] == NULL)
                 {
-                    printf("Memory allocation failed for moves->lst_moves[%d].\n", i);
+                    printf("Memory allocation failed for moves->positions[%d].\n", i);
                     return NULL;
                 }
 
-                moves->lst_moves[i]->x = x;
-                moves->lst_moves[i]->y = y;
+                moves->positions[i]->x = x;
+                moves->positions[i]->y = y;
                 i++;
             }
         }
     }
 
-    moves->lst_moves[i] = NULL;
-    moves->num_moves = i;
+    moves->positions[i] = NULL;
+    moves->length = i;
 
     return moves;
 }
 
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth)
 {
-    Move *moves = get_possible_moves(*game);
+    Poslist *moves = get_possible_moves(*game);
 
     printf("Tour de %s de placer un %c \n", get_player_name(game->current_player), game->current_player);
     Display_game(game);
@@ -232,11 +232,11 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
     update_player(game);
 
     // Nettoyage de la mémoire allouée pour les mouvements
-    for (int i = 0; moves->lst_moves[i] != NULL; i++)
+    for (int i = 0; moves->positions[i] != NULL; i++)
     {
-        free(moves->lst_moves[i]);
+        free(moves->positions[i]);
     }
-    free(moves->lst_moves);
+    free(moves->positions);
     free(moves);
 
     return 1;

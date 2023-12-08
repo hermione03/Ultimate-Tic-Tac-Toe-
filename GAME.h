@@ -23,9 +23,9 @@ typedef struct
 
 typedef struct
 {
-    Pos **lst_moves;
-    int num_moves;
-} Move;
+    Pos **positions;
+    int length;
+} PosList;
 
 // Prototypes de fonctions pour la manipulation des joueurs et des mouvements
 char *get_player_name(enum player p);

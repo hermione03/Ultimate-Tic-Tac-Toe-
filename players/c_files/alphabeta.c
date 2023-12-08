@@ -12,15 +12,15 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
         evaluateGame(node);
         return node;
     }
-    Move *moves = get_possible_moves(node->state);
+    Poslist *moves = get_possible_moves(node->state);
 
     if (maximizingPlayer == node->state.current_player)
     {
         Node *bestNode = NULL;
-        for (int i = 0; i < moves->num_moves; i++)
+        for (int i = 0; i < moves->length; i++)
         {
-            // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-            Node *child = create_node(apply_move(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->positions[i]->x, moves->positions[i]->y);
+            Node *child = create_node(apply_move(node->state, *moves->positions[i]), *moves->positions[i]);
             add_successor(node, child);
             Node *result = AlphaBeta(child, depth - 1, alpha, beta, !maximizingPlayer);
             if (bestNode == NULL || result->value > bestNode->value)
@@ -39,10 +39,10 @@ Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer
     else
     {
         Node *bestNode = NULL;
-        for (int i = 0; i < moves->num_moves; i++)
+        for (int i = 0; i < moves->length; i++)
         {
-            // printf("WAAAAAAAAAAAAAAAAAH ellllllllllssssssssseeeeeeeee: (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-            Node *child = create_node(apply_move(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            // printf("WAAAAAAAAAAAAAAAAAH ellllllllllssssssssseeeeeeeee: (%d,%d)\n", moves->positions[i]->x, moves->positions[i]->y);
+            Node *child = create_node(apply_move(node->state, *moves->positions[i]), *moves->positions[i]);
             // display_node(child);
             add_successor(node, child);
             Node *result = AlphaBeta(child, depth - 1, alpha, beta, !maximizingPlayer);
@@ -65,18 +65,18 @@ Pos alphaBeta_pick_move(GlobalGrid *game, int depth)
 {
     int i, x, y, xg, yg;
     Pos pos = {-1, -1};
-    Move *moves = get_possible_moves(*game);
+    Poslist *moves = get_possible_moves(*game);
     // printf("%c HEEEEERE ON ALPHABETA !!\n", game->current_player);
     printf("Mouvements disponibles :\n");
-    for (i = 0; moves->lst_moves[i] != NULL; i++)
+    for (i = 0; moves->positions[i] != NULL; i++)
     {
-        printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+        printf("(%d,%d) ", moves->positions[i]->x, moves->positions[i]->y);
     }
     printf("\n");
 
     Node *root = create_node(*game, pos);
     Node *bestMove = AlphaBeta(root, depth, INT_MIN, INT_MAX, game->current_player);
-    printf("Best Move : %d\n", bestMove->value);
+    printf("Best Poslist : %d\n", bestMove->value);
     printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", bestMove->lastpos.x, bestMove->lastpos.y);
     return bestMove->lastpos;
 }

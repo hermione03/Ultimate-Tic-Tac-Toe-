@@ -11,16 +11,16 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
         evaluateGame(node);
         return node;
     }
-    Move *moves = get_possible_moves(node->state);
+    Poslist *moves = get_possible_moves(node->state);
 
     if (maximizingPlayer == node->state.current_player)
     {
         // int bestValue = INT_MIN;
         Node *bestNode = NULL;
-        for (int i = 0; i < moves->num_moves; i++)
+        for (int i = 0; i < moves->length; i++)
         {
-            // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-            Node *child = create_node(apply_move(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->positions[i]->x, moves->positions[i]->y);
+            Node *child = create_node(apply_move(node->state, *moves->positions[i]), *moves->positions[i]);
             // display_node(child);
             add_successor(node, child);
             Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
@@ -36,9 +36,9 @@ Node *MiniMax(Node *node, int depth, int maximizingPlayer)
     {
         // int bestValue = INT_MAX;
         Node *bestNode = NULL;
-        for (int i = 0; i < moves->num_moves; i++)
+        for (int i = 0; i < moves->length; i++)
         {
-            Node *child = create_node(apply_move(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
+            Node *child = create_node(apply_move(node->state, *moves->positions[i]), *moves->positions[i]);
             add_successor(node, child);
             Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
             if (bestNode == NULL || result->value < bestNode->value)
@@ -56,18 +56,18 @@ Pos minimax_pick_move(GlobalGrid *game, int depth)
     int i, x, y, xg, yg;
     Pos pos = {-1, -1};
     // printf("%c HEEEEERE ON MINIMAX !!\n", game->current_player);
-    Move *moves = get_possible_moves(*game);
+    Poslist *moves = get_possible_moves(*game);
     printf("Mouvements disponibles :\n");
-    for (i = 0; moves->lst_moves[i] != NULL; i++)
+    for (i = 0; moves->positions[i] != NULL; i++)
     {
-        printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+        printf("(%d,%d) ", moves->positions[i]->x, moves->positions[i]->y);
     }
     printf("\n");
     // int depth = 5; // Set your desired depth for MiniMax
     Node *root = create_node(*game, pos);
     // display_tree(best);
     Node *bestMove = MiniMax(root, depth, game->current_player);
-    printf("Best Move : %d\n", bestMove->value);
+    printf("Best Poslist : %d\n", bestMove->value);
     printf("LAAAAAAAA POOOOOS A LA FING : (%d,%d)\n", bestMove->lastpos.x, bestMove->lastpos.y);
     return bestMove->lastpos;
 }

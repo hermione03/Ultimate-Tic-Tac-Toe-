@@ -16,7 +16,7 @@ int evaluateLG(LocalGrid *lcState);
 // Fonction de teste
 void EvaluateMove(Node *state);
 // Trouve les prochains mouvements possibles pour un état de jeu donné
-Move *get_possible_moves(GlobalGrid game);
+Poslist *get_possible_moves(GlobalGrid game);
 // Applique un mouvement à l'état actuel du jeu et renvoie le nouvel état
 GlobalGrid apply_move(GlobalGrid game, Pos pos);
 

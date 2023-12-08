@@ -3,20 +3,20 @@
 Pos random_pick_move(GlobalGrid *game)
 {
     Pos pos;
-    Move *moves = get_possible_moves(*game);
+    PosList *moves = get_possible_moves(*game);
     // printf("%c HEEEEERE ON RANDOM !!\n", game->current_player);
     printf("Mouvements disponibles :\n");
-    for (int i = 0; moves->lst_moves[i] != NULL; i++)
+    for (int i = 0; moves->positions[i] != NULL; i++)
     {
-        printf("(%d,%d) ", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
+        printf("(%d,%d) ", moves->positions[i]->x, moves->positions[i]->y);
     }
     printf("\n");
 
     // Générer un indice aléatoire dans la liste des mouvements disponibles
     int random_index = rand() % moves->num_moves;
 
-    int x = moves->lst_moves[random_index]->x;
-    int y = moves->lst_moves[random_index]->y;
+    int x = moves->positions[random_index]->x;
+    int y = moves->positions[random_index]->y;
 
     pos.x = x;
     pos.y = y;
