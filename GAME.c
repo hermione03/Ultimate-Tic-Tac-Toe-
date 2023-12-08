@@ -156,6 +156,29 @@ PosList *get_possible_moves(GlobalGrid game)
     return moves;
 }
 
+Pos human_pick_move(GlobalGrid *game)
+{
+    Pos pos;
+    do
+    {
+
+        if (verbose)
+            printf("Choisissez une case à jouer (x, y) : ");
+        // Si la case sélectionnée n'est pas valide:
+        if (scanf("%d,%d", &pos.x, &pos.y) != 2)
+        {
+
+            // Afficher un message d'erreur
+            if (verbose)
+                printf("Entrée invalide. Veuillez entrer les coordonnées x et y séparées par une virgule (par exemple : 1,2).\n");
+            // Vider le tampon d'entrée
+            while (getchar() != '\n')
+                ;
+        }
+    } while (!is_move_possible(game, pos.x, pos.y));
+    return pos;
+}
+
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth)
 {
 
