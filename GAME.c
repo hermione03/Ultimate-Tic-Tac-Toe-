@@ -160,7 +160,6 @@ Poslist *get_possible_moves(GlobalGrid game)
 
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth)
 {
-    Poslist *moves = get_possible_moves(*game);
 
     printf("Tour de %s de placer un %c \n", get_player_name(game->current_player), game->current_player);
     Display_game(game);
@@ -231,15 +230,7 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
 
     update_player(game);
 
-    // Nettoyage de la mémoire allouée pour les mouvements
-    for (int i = 0; moves->positions[i] != NULL; i++)
-    {
-        free(moves->positions[i]);
-    }
-    free(moves->positions);
-    free(moves);
-
-    return 1;
+        return 1;
 }
 
 int is_game_over(GlobalGrid *game)
