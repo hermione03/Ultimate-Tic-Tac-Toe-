@@ -2,3 +2,4 @@
 *.o
 interf.*
 Ultimate_TicTacToe
+dist/
