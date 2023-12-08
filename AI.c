@@ -32,23 +32,6 @@ int giveValue(enum player p)
     }
 }
 
-int check_win_condition(LocalGrid *lcState)
-{
-    is_LG_won(lcState);
-    if (lcState->winner == COMPUTER)
-    {
-        return -1;
-    }
-    else if (lcState->winner == HUMAN)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-}
-
 int evaluateLG(LocalGrid *lcState)
 {
     int evaluation = 0;
@@ -203,87 +186,6 @@ void evaluateGame(Node *curr)
     free(mainBd);
 
     curr->value = evale;
-}
-
-Move *get_possible_moves(GlobalGrid game)
-{
-    int x, y, i = 0;
-    int capacity = 1;
-    Move *moves = (Move *)malloc(sizeof(Move));
-    moves->lst_moves = (Pos **)malloc(capacity * sizeof(Pos *));
-
-    if (moves == NULL || moves->lst_moves == NULL)
-    {
-        printf("Memory allocation failed for moves.\n");
-        return NULL;
-    }
-
-    for (x = 0; x < 3; x++)
-    {
-        for (y = 0; y < 27; y++)
-        {
-            if (is_move_possible(&game, x, y))
-            {
-                if (i >= capacity - 1)
-                {
-                    capacity += 1;
-                    moves->lst_moves = (Pos **)realloc(moves->lst_moves, capacity * sizeof(Pos *));
-                    if (moves->lst_moves == NULL)
-                    {
-                        printf("Memory reallocation failed for moves->lst_moves.\n");
-                        return NULL;
-                    }
-                }
-
-                moves->lst_moves[i] = (Pos *)malloc(sizeof(Pos));
-                if (moves->lst_moves[i] == NULL)
-                {
-                    printf("Memory allocation failed for moves->lst_moves[%d].\n", i);
-                    return NULL;
-                }
-
-                moves->lst_moves[i]->x = x;
-                moves->lst_moves[i]->y = y;
-                i++;
-            }
-        }
-    }
-
-    moves->lst_moves[i] = NULL;
-    moves->num_moves = i;
-
-    return moves;
-}
-
-GlobalGrid apply_move(GlobalGrid game, Pos pos)
-{
-    int xg, yg;
-    GlobalGrid next = game;
-    xg = (pos.y / 3) / 3; // Récupère la grille globale à mettre à jour
-    yg = (pos.y / 3) % 3; // Récupère la position de la localboard dans la grille globale
-    int x = pos.x;
-    int y = (pos.y % 3);
-    // printf("APPLYYYYYY LE CHOIX ETAIIIIIIIIT (%d,%d)\n", x, y);
-    next.localboard[xg][yg].board[x][y] = game.current_player;
-    is_LG_won(&next.localboard[x][y % 3]);
-
-    if (is_local_grid_full(&next.localboard[x][y % 3]) || next.localboard[x][y % 3].winner != ' ')
-    {
-        // printf("Grille etudiée : (%d,%d)\n", x, y % 3);
-        // printf("Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", is_local_grid_full(next.localboard[x][y % 3]), is_LG_won(next.localboard[x][y % 3]));
-        next.relative_grid = -1;
-    }
-    else
-    {
-        // printf("***********Grille locale testée  : %d %d\n", x, y % 3);
-        // printf("***********Winner : %c\n", next.localboard[x][y % 3].winner);
-        // printf("ALORS PPK PAS : Grille relative pleine ou déjà gagnée, le prochain coup est libre !%d %d\n", is_local_grid_full(next.localboard[x][y % 3]), is_LG_won(&next.localboard[x][y % 3]));
-        next.relative_grid = y % 3 + x * 3;
-        // printf("relaaaaaative : %d\n", next->relative_grid);
-    }
-    // Display_game(&next);
-    update_player(&next);
-    return next;
 }
 
 void add_successor(Node *node, Node *successor)
