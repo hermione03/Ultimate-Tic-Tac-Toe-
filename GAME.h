@@ -32,10 +32,7 @@ typedef struct
 char *playerToString(enum player p);
 void updatePlayer(GlobalGrid *game);
 int possibleMove(GlobalGrid *game, int x, int y);
-Pos random_pick_move(GlobalGrid *game);               // pour des mouvement aleatoirs
-Pos human_pick_move(GlobalGrid *game);                // pour qu'un humain puisse jouer
-Pos minimax_pick_move(GlobalGrid *game, int depth);   // MiniMax sans elagage
-Pos alphaBeta_pick_move(GlobalGrid *game, int depth); // MiniMax AVEC elagage AlphaBeta
+Pos human_pick_move(GlobalGrid *game); // pour qu'un humain puisse jouer
 int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_move)(), int depth);
 
 #endif /* UTTT_H */
