@@ -353,53 +353,6 @@ void freeTree(Node *root)
     free(root);             // Libération du nœud actuel
 }
 
-Node *MiniMax(Node *node, int depth, int maximizingPlayer)
-{
-    if (depth == 0 || game_CheckIfWon(&node->state) || isGlobalGridFull(node->state))
-    {
-        evaluateGame(node);
-        return node;
-    }
-    Move *moves = NextMoves(node->state);
-
-    if (maximizingPlayer == node->state.current_player)
-    {
-        // int bestValue = INT_MIN;
-        Node *bestNode = NULL;
-        for (int i = 0; i < moves->num_moves; i++)
-        {
-            // printf("WAAAAAAAAAAAAAAAAAH : (%d,%d)\n", moves->lst_moves[i]->x, moves->lst_moves[i]->y);
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
-            // displayNode(child);
-            addSuccessor(node, child);
-            Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
-            if (bestNode == NULL || result->value > bestNode->value)
-            {
-                bestNode = result;
-            }
-        }
-        // displayNode(bestNode);
-        return bestNode;
-    }
-    else
-    {
-        // int bestValue = INT_MAX;
-        Node *bestNode = NULL;
-        for (int i = 0; i < moves->num_moves; i++)
-        {
-            Node *child = createNode(ApplyMove(node->state, *moves->lst_moves[i]), *moves->lst_moves[i]);
-            addSuccessor(node, child);
-            Node *result = MiniMax(child, depth - 1, !maximizingPlayer);
-            if (bestNode == NULL || result->value < bestNode->value)
-            {
-                bestNode = result;
-            }
-        }
-        // displayNode(bestNode);
-        return bestNode;
-    }
-}
-
 Node *AlphaBeta(Node *node, int depth, int alpha, int beta, int maximizingPlayer)
 {
     if (depth == 0 || game_CheckIfWon(&node->state) || isGlobalGridFull(node->state))
