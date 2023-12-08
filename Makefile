@@ -20,6 +20,7 @@ $(NAME): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(NAME)
+	rm -rf $(DISTDIR)
 
 dist: clean
 	mkdir -p $(DISTDIR)/$(NAME)
