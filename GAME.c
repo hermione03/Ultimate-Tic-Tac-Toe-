@@ -108,12 +108,13 @@ GlobalGrid apply_move(GlobalGrid game, Pos pos)
     return next;
 }
 
-Poslist *get_possible_moves(GlobalGrid game)
+PosList *get_possible_moves(GlobalGrid game)
 {
-    int x, y, i = 0;
-    int capacity = 1;
-    Poslist *moves = (Poslist *)malloc(sizeof(Poslist));
-    moves->positions = (Pos **)malloc(capacity * sizeof(Pos *));
+    int x, y;
+    int capacity = 0;
+    PosList *moves = (PosList *)malloc(sizeof(PosList));
+    moves->positions = (Pos **)malloc((capacity + 1) * sizeof(Pos *));
+    moves->positions[capacity] = NULL;
 
     if (moves == NULL || moves->positions == NULL)
     {
@@ -127,33 +128,30 @@ Poslist *get_possible_moves(GlobalGrid game)
         {
             if (is_move_possible(&game, x, y))
             {
-                if (i >= capacity - 1)
+                moves->positions[capacity] = (Pos *)malloc(sizeof(Pos));
+                if (moves->positions[capacity] == NULL)
                 {
-                    capacity += 1;
-                    moves->positions = (Pos **)realloc(moves->positions, capacity * sizeof(Pos *));
-                    if (moves->positions == NULL)
-                    {
-                        printf("Memory reallocation failed for moves->positions.\n");
-                        return NULL;
-                    }
-                }
-
-                moves->positions[i] = (Pos *)malloc(sizeof(Pos));
-                if (moves->positions[i] == NULL)
-                {
-                    printf("Memory allocation failed for moves->positions[%d].\n", i);
+                    printf("Memory allocation failed for moves->lst_moves[%d].\n", capacity);
                     return NULL;
                 }
 
-                moves->positions[i]->x = x;
-                moves->positions[i]->y = y;
-                i++;
+                moves->positions[capacity]->x = x;
+                moves->positions[capacity]->y = y;
+
+                capacity++;
+                moves->positions = (Pos **)realloc(moves->positions, (capacity + 1) * sizeof(Pos *));
+                if (moves->positions == NULL)
+                {
+                    printf("Memory reallocation failed for moves->lst_moves.\n");
+                    return NULL;
+                }
+                moves->positions[capacity] = NULL;
             }
         }
     }
 
-    moves->positions[i] = NULL;
-    moves->length = i;
+    moves->positions[capacity] = NULL;
+    moves->length = capacity;
 
     return moves;
 }
@@ -230,7 +228,7 @@ int UTTT_GAME(GlobalGrid *game, Pos (*player1_pick_move)(), Pos (*player2_pick_m
 
     update_player(game);
 
-        return 1;
+    return 1;
 }
 
 int is_game_over(GlobalGrid *game)
