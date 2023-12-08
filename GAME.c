@@ -111,12 +111,11 @@ GlobalGrid apply_move(GlobalGrid game, Pos pos)
 PosList *get_possible_moves(GlobalGrid game)
 {
     int x, y;
-    int capacity = 0;
-    PosList *moves = (PosList *)malloc(sizeof(PosList));
-    moves->positions = (Pos **)malloc((capacity + 1) * sizeof(Pos *));
-    moves->positions[capacity] = NULL;
+    PosList *moves = (PosList *)malloc(sizeof(*moves));
+    moves->positions = NULL;
+    moves->length = 0;
 
-    if (moves == NULL || moves->positions == NULL)
+    if (moves == NULL)
     {
         printf("Memory allocation failed for moves.\n");
         return NULL;
@@ -128,30 +127,27 @@ PosList *get_possible_moves(GlobalGrid game)
         {
             if (is_move_possible(&game, x, y))
             {
-                moves->positions[capacity] = (Pos *)malloc(sizeof(Pos));
-                if (moves->positions[capacity] == NULL)
-                {
-                    printf("Memory allocation failed for moves->lst_moves[%d].\n", capacity);
-                    return NULL;
-                }
+                moves->length++;
 
-                moves->positions[capacity]->x = x;
-                moves->positions[capacity]->y = y;
-
-                capacity++;
-                moves->positions = (Pos **)realloc(moves->positions, (capacity + 1) * sizeof(Pos *));
+                moves->positions = (Pos **)realloc(moves->positions, moves->length * sizeof(*moves->positions));
                 if (moves->positions == NULL)
                 {
                     printf("Memory reallocation failed for moves->lst_moves.\n");
                     return NULL;
                 }
-                moves->positions[capacity] = NULL;
+
+                moves->positions[moves->length - 1] = (Pos *)malloc(sizeof(Pos));
+                if (moves->positions[moves->length - 1] == NULL)
+                {
+                    printf("Memory allocation failed for moves->lst_moves[%d].\n", moves->length - 1);
+                    return NULL;
+                }
+
+                moves->positions[moves->length - 1]->x = x;
+                moves->positions[moves->length - 1]->y = y;
             }
         }
     }
-
-    moves->positions[capacity] = NULL;
-    moves->length = capacity;
 
     return moves;
 }
